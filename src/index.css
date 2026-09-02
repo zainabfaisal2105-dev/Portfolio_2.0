@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+/* ---------- Y2K / retro-web micro-interaction utilities ---------- */
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.marquee-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-scroll 18s linear infinite;
+}
+
+@keyframes glitch-flicker {
+  0%, 92%, 100% { text-shadow: 3px 3px 0px #f43f5e; transform: translate(0, 0); }
+  93% { text-shadow: -2px 0px 0px #22d3ee, 2px 0px 0px #f43f5e; transform: translate(-1px, 1px); }
+  95% { text-shadow: 2px 0px 0px #22d3ee, -2px 0px 0px #f43f5e; transform: translate(1px, -1px); }
+  97% { text-shadow: 3px 3px 0px #f43f5e; transform: translate(0, 0); }
+}
+
+.glitch-hover:hover {
+  animation: glitch-flicker 0.6s steps(2, end);
+}
+
+@keyframes sparkle-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.sparkle-spin {
+  animation: sparkle-spin 3s ease-in-out infinite;
+}
+
+@keyframes digit-flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.5; }
+}
+
+.hit-counter-digit {
+  animation: digit-flicker 4s infinite;
+}
+
+/* ---------- MySpace.profile bold jewel-tone Y2K nostalgia utilities ---------- */
+
+@keyframes glitter-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.myspace-glitter-bg {
+  background-image: radial-gradient(circle, rgba(255,215,0,0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(122,14,43,0.35) 1px, transparent 1px),
+    radial-gradient(circle, rgba(15,155,110,0.3) 1px, transparent 1px);
+  background-size: 20px 20px, 30px 30px, 26px 26px;
+  background-position: 0 0, 10px 14px, 18px 4px;
+  animation: glitter-shimmer 7s ease-in-out infinite;
+}
+
+@keyframes gold-glow-pulse {
+  0%, 100% { text-shadow: 2px 2px 0 #000, 0 0 10px rgba(255,215,0,0.5); }
+  50% { text-shadow: 2px 2px 0 #000, 0 0 20px rgba(255,215,0,0.9); }
+}
+
+.myspace-glow-text {
+  animation: gold-glow-pulse 2.5s ease-in-out infinite;
+}
+
+.myspace-bubble-heading {
+  color: #c7ccd6;
+  -webkit-text-stroke: 1.5px #000;
+  text-shadow: 2px 2px 0 #000, 4px 4px 0 rgba(122,14,43,0.6);
+}
+
+.myspace-card {
+  background: rgba(13,7,5,0.9);
+  border: 2px solid #c7ccd6;
+  box-shadow: 4px 4px 0px 0px #8ea2c9;
+}
+
+@keyframes heart-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.myspace-heart-pulse {
+  animation: heart-pulse 1.4s ease-in-out infinite;
+}
+
+/* Twinkling silver starfield, evoking a navy night-sky MySpace background */
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.9; }
+}
+
+.myspace-tiled-bg {
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%, #eef1f7 0, transparent 60%),
+    radial-gradient(1px 1px at 22% 38%, #c7ccd6 0, transparent 60%),
+    radial-gradient(1.5px 1.5px at 38% 8%, #eef1f7 0, transparent 60%),
+    radial-gradient(1px 1px at 52% 62%, #8ea2c9 0, transparent 60%),
+    radial-gradient(1.5px 1.5px at 68% 22%, #c7ccd6 0, transparent 60%),
+    radial-gradient(1px 1px at 78% 48%, #eef1f7 0, transparent 60%),
+    radial-gradient(1.5px 1.5px at 88% 78%, #8ea2c9 0, transparent 60%),
+    radial-gradient(1px 1px at 15% 82%, #c7ccd6 0, transparent 60%),
+    radial-gradient(1.5px 1.5px at 45% 92%, #eef1f7 0, transparent 60%),
+    radial-gradient(1px 1px at 95% 15%, #c7ccd6 0, transparent 60%);
+  background-size: 320px 320px;
+  background-repeat: repeat;
+  animation: star-twinkle 4s ease-in-out infinite;
+}
+
