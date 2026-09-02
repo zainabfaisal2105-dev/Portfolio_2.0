@@ -12,7 +12,7 @@ export const CurrentlyExploring: React.FC<CurrentlyExploringProps> = ({ activeTh
     { name: 'Agentic AI Systems', desc: 'Autonomous multi-agent orchestration, tool calling, and planning loops.', icon: <Bot className="w-5 h-5 text-cyan-400" /> },
     { name: 'LLM Applications & RAG', desc: 'Advanced hybrid retrieval, reranking algorithms, and evaluation harnesses.', icon: <Sparkles className="w-5 h-5 text-purple-400" /> },
     { name: 'Reinforcement Learning', desc: 'Reward modeling, policy optimization, and alignment constraints.', icon: <Compass className="w-5 h-5 text-emerald-400" /> },
-    { name: 'Cybersecurity Foundations', desc: 'Offensive & defensive protocol analysis, packet inspection, and system hardening.', icon: <Lock className="w-5 h-5 text-amber-400" /> },
+    { name: 'Cybersecurity Foundations', desc: 'Offensive & defensive protocol analysis, packet inspection, and system hardening.', icon: <Lock className="w-5 h-5 text-indigo-400" /> },
     { name: 'Cloud Computing', desc: 'Scalable cloud infrastructure, containerization, and microservices.', icon: <Cloud className="w-5 h-5 text-blue-400" /> },
   ];
 

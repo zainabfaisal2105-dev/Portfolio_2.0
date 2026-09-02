@@ -164,14 +164,17 @@ Quick commands: [whoami] [skills] [projects] [cat resume.txt] [matrix] [email]`,
     }
 
     if (lowerCmd === 'email' || lowerCmd === 'contact') {
-      if (onOpenEmailModal) {
-        onOpenEmailModal();
-      }
       setHistory((prev) => [
         ...prev,
         {
           command: rawCmd,
-          output: `[SYSTEM]: Opening Quantum Mail Dispatcher for direct email transmission to xanab2105@gmail.com...`,
+          output: `[CONTACT INFO]:
+-------------------------------------------------------------------
+Primary Email: xanab2105@gmail.com
+LinkedIn     : https://www.linkedin.com/in/zainab-faisal-001320406/
+GitHub       : https://github.com
+Status       : Available for AI systems & low-level software collaboration!
+-------------------------------------------------------------------`,
           timestamp: timeStr,
         },
       ]);

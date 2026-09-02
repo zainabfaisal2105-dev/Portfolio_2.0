@@ -20,16 +20,15 @@ import { OSDesktop } from './OSDesktop';
 interface HeroSectionProps {
   activeTheme: ThemeMode;
   onOpenTerminal: () => void;
-  onOpenEmailModal: () => void;
+  onOpenEmailModal?: () => void;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   activeTheme,
   onOpenTerminal,
-  onOpenEmailModal,
 }) => {
   const floatingBadges = [
-    { name: 'Python', color: 'from-amber-500 to-yellow-500', pos: 'top-2 -left-4 sm:-left-8' },
+    { name: 'Python', color: 'from-cyan-500 to-blue-600', pos: 'top-2 -left-4 sm:-left-8' },
     { name: 'AI', color: 'from-cyan-500 to-blue-500', pos: 'top-12 -right-4 sm:-right-8' },
     { name: 'Machine Learning', color: 'from-purple-500 to-pink-500', pos: 'top-32 -left-6 sm:-left-12' },
     { name: 'LLMs', color: 'from-emerald-500 to-teal-500', pos: 'bottom-28 -right-6 sm:-right-10' },
@@ -59,7 +58,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           className="absolute inset-0 pointer-events-none opacity-[0.25]"
           style={{
             backgroundImage:
-              'repeating-linear-gradient(45deg, #9aa4b8 0, #9aa4b8 2px, transparent 2px, transparent 22px), repeating-linear-gradient(-45deg, #ffe27a 0, #ffe27a 2px, transparent 2px, transparent 22px)',
+              'repeating-linear-gradient(45deg, #9aa4b8 0, #9aa4b8 2px, transparent 2px, transparent 22px), repeating-linear-gradient(-45deg, #8ea2c9 0, #8ea2c9 2px, transparent 2px, transparent 22px)',
           }}
         />
       )}
@@ -217,7 +216,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <div className="flex items-center gap-1">
                     <span>ZAINAB.SYS</span>
                   </div>
-                  <div className="bg-yellow-300 text-black px-2 py-0.5 border border-black text-[10px] flex items-center gap-1">
+                  <div className="bg-pink-300 text-black px-2 py-0.5 border border-black text-[10px] flex items-center gap-1 font-bold">
                     <span className="sparkle-spin inline-block">✦</span>
                     LOOKING FOR ATTENTION !!!
                   </div>
@@ -251,7 +250,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <span className="block text-[9px] text-zinc-600">MBTI</span>
                       <span>INTJ-A / CYBER</span>
                     </div>
-                    <div className="bg-yellow-200 border-2 border-black p-1.5 rounded">
+                    <div className="bg-cyan-200 border-2 border-black p-1.5 rounded">
                       <span className="block text-[9px] text-zinc-600">CONSTELLATION</span>
                       <span>TAURUS / AI</span>
                     </div>

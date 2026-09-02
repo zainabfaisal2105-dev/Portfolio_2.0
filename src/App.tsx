@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { AboutSection } from './components/AboutSection';
@@ -10,18 +10,15 @@ import { ProjectsSection } from './components/ProjectsSection';
 import { AiPhilosophySection } from './components/AiPhilosophySection';
 import { CurrentlyExploring } from './components/CurrentlyExploring';
 import { ContactSection } from './components/ContactSection';
-import { GuestbookSection } from './components/GuestbookSection';
 import { Footer } from './components/Footer';
 import { MySpaceProfile } from './components/MySpaceProfile';
 import { ThemeControlWidget } from './components/ThemeControlWidget';
 import { HackingTerminalModal } from './components/HackingTerminalModal';
 import { ThemeMode } from './types';
-import { X } from 'lucide-react';
 
 export default function App() {
   const [activeTheme, setActiveTheme] = useState<ThemeMode>('myspace');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   // Background Theme Styling Classes
   const getThemeClass = () => {
@@ -50,7 +47,6 @@ export default function App() {
             activeTheme={activeTheme}
             onThemeChange={setActiveTheme}
             onOpenTerminal={() => setIsTerminalOpen(true)}
-            onOpenEmailModal={() => setIsEmailModalOpen(true)}
           />
         ) : (
           /* Neural & Y2K Theme Section Flow */
@@ -59,14 +55,12 @@ export default function App() {
               activeTheme={activeTheme}
               onThemeChange={setActiveTheme}
               onOpenTerminal={() => setIsTerminalOpen(true)}
-              onOpenEmailModal={() => setIsEmailModalOpen(true)}
             />
 
             <main className="space-y-12">
               <HeroSection
                 activeTheme={activeTheme}
                 onOpenTerminal={() => setIsTerminalOpen(true)}
-                onOpenEmailModal={() => setIsEmailModalOpen(true)}
               />
 
               <AboutSection activeTheme={activeTheme} />
@@ -82,6 +76,8 @@ export default function App() {
               <AiPhilosophySection activeTheme={activeTheme} />
 
               <CurrentlyExploring activeTheme={activeTheme} />
+
+              <ContactSection activeTheme={activeTheme} />
             </main>
 
             <Footer
@@ -103,39 +99,8 @@ export default function App() {
           onClose={() => setIsTerminalOpen(false)}
           activeTheme={activeTheme}
           onThemeChange={setActiveTheme}
-          onOpenEmailModal={() => {
-            setIsTerminalOpen(false);
-            setIsEmailModalOpen(true);
-          }}
         />
-
-        {/* Direct Email Modal Popup */}
-        <AnimatePresence>
-          {isEmailModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-              >
-                <button
-                  onClick={() => setIsEmailModalOpen(false)}
-                  className="absolute top-4 right-4 z-10 p-2 rounded-full transition-all cursor-pointer bg-white/10 hover:bg-white/20 text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-                <ContactSection
-                  activeTheme={activeTheme}
-                  isModalMode={true}
-                  onCloseModal={() => setIsEmailModalOpen(false)}
-                />
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
       </motion.div>
     </div>
   );
 }
-

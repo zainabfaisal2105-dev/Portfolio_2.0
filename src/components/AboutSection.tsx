@@ -25,7 +25,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ activeTheme }) => {
       desc: 'Full-stack, Python, C++, Web & Databases',
     },
     {
-      icon: <Search className="w-5 h-5 text-amber-400" />,
+      icon: <Search className="w-5 h-5 text-indigo-400" />,
       title: 'Systems Thinker',
       desc: 'Architecture, Assembly, Networks & Security',
     },
@@ -48,7 +48,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ activeTheme }) => {
       desc: 'python, c++, react, whatever gets it done',
     },
     {
-      icon: <Search className="w-5 h-5 text-amber-400" />,
+      icon: <Search className="w-5 h-5 text-indigo-400" />,
       title: 'nosy about systems',
       desc: 'how stuff works under the hood... networks n security 2',
     },

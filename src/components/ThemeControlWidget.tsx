@@ -26,7 +26,7 @@ export const ThemeControlWidget: React.FC<ThemeControlWidgetProps> = ({
               activeTheme === 'myspace'
                 ? 'bg-[#101726] border-[#8ea2c9] text-[#eef1f7]'
                 : activeTheme === 'y2k'
-                ? 'bg-yellow-200 border-black text-black'
+                ? 'bg-pink-100 border-black text-black'
                 : 'bg-[#080d1a] border-cyan-500/40 text-white'
             }`}
           >
@@ -117,7 +117,7 @@ export const ThemeControlWidget: React.FC<ThemeControlWidgetProps> = ({
         }`}
         title="Change Portfolio Skin / Theme"
       >
-        <span className="text-amber-300">★</span>
+        <span className="text-cyan-400">★</span>
         <span>[ change skin: <strong className="underline decoration-dotted">{activeTheme}</strong> ▾ ]</span>
       </button>
     </div>

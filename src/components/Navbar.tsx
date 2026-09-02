@@ -20,14 +20,13 @@ interface NavbarProps {
   activeTheme: ThemeMode;
   onThemeChange: (theme: ThemeMode) => void;
   onOpenTerminal: () => void;
-  onOpenEmailModal: () => void;
+  onOpenEmailModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTheme,
   onThemeChange,
   onOpenTerminal,
-  onOpenEmailModal,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -40,6 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { name: 'Security', href: '#security' },
     { name: 'AI Lab', href: '#ailab' },
     { name: 'Exploring', href: '#exploring' },
+    { name: 'Contact', href: '#contact' },
   ];
 
   const myspaceNavLinks = [
@@ -51,6 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { name: 'security stuff', href: '#security' },
     { name: 'ai lab', href: '#ailab' },
     { name: 'whatever im up 2', href: '#exploring' },
+    { name: 'contact info', href: '#contact' },
     { name: 'leave a msg', href: '#guestbook' },
   ];
 

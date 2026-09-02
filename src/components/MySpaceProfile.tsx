@@ -38,7 +38,9 @@ import {
   Smile,
   RefreshCw,
   Lightbulb,
-  Pin
+  Pin,
+  Copy,
+  Check
 } from 'lucide-react';
 import { ThemeMode, ProjectCaseStudy, CertificationItem } from '../types';
 import { AudioToggle } from './AudioToggle';
@@ -49,7 +51,7 @@ interface MySpaceProfileProps {
   activeTheme: ThemeMode;
   onThemeChange: (theme: ThemeMode) => void;
   onOpenTerminal: () => void;
-  onOpenEmailModal: () => void;
+  onOpenEmailModal?: () => void;
 }
 
 export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
@@ -87,7 +89,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
       past: {
         speaker: 'PAST ME (2008 vibe)',
         text: 'if i stay up until 4am and rewrite this entire codebase from scratch without any planning, it will definitely work first try and i will be a legendary hacker.',
-        reaction: '😎 (fueled purely by optimism & cold chai)'
+        reaction: '😎 (fueled purely by optimism & cold coffee)'
       },
       current: {
         speaker: 'CURRENT ME',
@@ -143,21 +145,21 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
       title: '📌 NOTE TO SELF:',
       text: 'do not touch working code just to "make it cleaner" at 1:45am. it will not get cleaner.',
       peeled: false,
-      color: 'bg-amber-950/80 border-amber-300/80 text-amber-200'
+      color: 'bg-[#13203c] border-[#3b4d75] text-[#c7ccd6]'
     },
     {
       id: 'note_2',
       title: '⚡ SCIENTIFIC FACT:',
       text: 'printing "HERE 1", "HERE 2", "WHY IS IT REACHING HERE" is a valid enterprise testing methodology.',
       peeled: false,
-      color: 'bg-cyan-950/80 border-cyan-300/80 text-cyan-200'
+      color: 'bg-[#182542] border-[#8ea2c9]/60 text-[#c7ccd6]'
     },
     {
       id: 'note_3',
       title: '👀 CRITICAL OBSERVATION:',
       text: 'the probability of a bug existing is directly proportional to how proud you are of the function you just wrote.',
       peeled: false,
-      color: 'bg-pink-950/80 border-pink-300/80 text-pink-200'
+      color: 'bg-[#0f1d33] border-[#3b4d75] text-[#c7ccd6]'
     }
   ]);
 
@@ -174,6 +176,19 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
   const triggerToast = (msg: string) => {
     setFriendToast(msg);
     setTimeout(() => setFriendToast(null), 3500);
+  };
+
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const handleCopyEmail = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText('xanab2105@gmail.com');
+      setCopiedEmail(true);
+      confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+      triggerToast('★ copied xanab2105@gmail.com 2 clipboard!! <3');
+      setTimeout(() => setCopiedEmail(false), 3000);
+    } else {
+      triggerToast('★ email: xanab2105@gmail.com');
+    }
   };
 
   const handleAddFriend = () => {
@@ -319,7 +334,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
     { name: 'google', role: 'answers choices', icon: '🔍', note: 'my actual brain' },
     { name: 'stack overflow', role: 'legal guardian', icon: '📚', note: 'since 2018 <3' },
     { name: 'the terminal', role: 'bestie', icon: '📟', note: 'looks intimidating' },
-    { name: 'chai / coffee', role: 'pure fuel', icon: '☕', note: '2am essential' },
+    { name: 'coffee', role: 'pure fuel', icon: '☕', note: '2am essential' },
     { name: 'tab #47', role: 'dont close me', icon: '📑', note: 'crucial doc' },
     { name: 'pytest', role: 'the truth hurts', icon: '🧪', note: '12 failed, 1 passed' },
     { name: 'tom from myspace', role: 'everyone\'s pal', icon: '👤', note: 'classic <3' },
@@ -327,6 +342,18 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
 
   // Certifications
   const certs: CertificationItem[] = [
+    {
+      title: 'Cyber Security Foundations',
+      issuer: 'Coursera',
+      badge: 'CYBERSECURITY',
+      description: 'Network security fundamentals, threat landscape analysis, defensive security, and incident response.',
+    },
+    {
+      title: 'SQA Internship',
+      issuer: 'Grayphite',
+      badge: 'SQA / QA',
+      description: 'Software quality assurance, test scenario design, manual & automation testing, regression and bug triage.',
+    },
     {
       title: 'Building Software with Generative AI',
       issuer: 'ICFCS 2026 International Conference',
@@ -381,7 +408,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
 
             {/* Old-Web Persistent Theme Switcher */}
             <div className="flex items-center gap-1.5 bg-[#070b16] px-2 py-1 border border-[#3b4d75]">
-              <span className="text-[10px] text-amber-300 font-bold">★ [ SKINS ]:</span>
+              <span className="text-[10px] text-[#8ea2c9] font-bold">★ [ SKINS ]:</span>
               <button
                 onClick={() => onThemeChange('myspace')}
                 className="px-1.5 py-0.5 bg-[#8ea2c9] text-black font-bold hover:underline cursor-pointer"
@@ -409,14 +436,16 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
           {/* Old-web horizontal sub-links */}
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 text-[11px] text-[#8ea2c9]">
             <a href="#about" className="hover:underline hover:text-white">[ Home ]</a>
-            <a href="#pastvspresent" className="hover:underline hover:text-amber-300 font-bold">[ Past Me vs Now ]</a>
+            <a href="#pastvspresent" className="hover:underline hover:text-white font-bold">[ Past Me vs Now ]</a>
             <a href="#interests" className="hover:underline hover:text-white">[ Interests ]</a>
             <a href="#skills" className="hover:underline hover:text-white">[ Skills ]</a>
             <a href="#projects" className="hover:underline hover:text-white">[ My Stuff ]</a>
             <a href="#ailab" className="hover:underline hover:text-white">[ AI Lab ]</a>
-            <a href="#sqa" className="hover:underline hover:text-white">[ SQA Stuff ]</a>
+            <a href="#rabbitholes" className="hover:underline hover:text-white font-bold text-[#8ea2c9]">[ Rabbit Holes ]</a>
+            <a href="#exploring" className="hover:underline hover:text-white">[ Exploring ]</a>
             <a href="#friends" className="hover:underline hover:text-white">[ Top 8 ]</a>
-            <a href="#theories" className="hover:underline hover:text-pink-300">[ Stupid Theories ]</a>
+            <a href="#theories" className="hover:underline hover:text-white">[ Stupid Theories ]</a>
+            <a href="#contact" className="hover:underline hover:text-white font-bold text-[#8ea2c9]">[ Contact Info ]</a>
             <a href="#guestbook" className="hover:underline hover:text-white">[ Wall & Comments ]</a>
             <button onClick={onOpenTerminal} className="hover:underline text-emerald-400 cursor-pointer font-bold">[ &gt;_ Terminal ]</button>
           </div>
@@ -500,12 +529,12 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                   <div className="pt-1">
                     <button
                       onClick={() => setCurrentMoodIndex((prev) => (prev + 1) % MOOD_OPTIONS.length)}
-                      className="text-left w-full p-1 bg-[#141e35] border border-[#2f3e63] hover:border-amber-300 transition-colors cursor-pointer group"
+                      className="text-left w-full p-1 bg-[#141e35] border border-[#2f3e63] hover:border-[#8ea2c9] transition-colors cursor-pointer group"
                       title="Click to cycle Zainab's mood!"
                     >
                       <div className="text-[9px] text-[#8ea2c9] flex items-center justify-between">
                         <span>[ MOOD SELECTOR (click 2 change) ]:</span>
-                        <RefreshCw className="w-2.5 h-2.5 group-hover:rotate-180 transition-transform text-amber-300" />
+                        <RefreshCw className="w-2.5 h-2.5 group-hover:rotate-180 transition-transform text-[#8ea2c9]" />
                       </div>
                       <span className="text-[11px] text-[#eef1f7] font-bold">
                         {MOOD_OPTIONS[currentMoodIndex].icon} ~*~ {MOOD_OPTIONS[currentMoodIndex].label} ~*~
@@ -530,12 +559,12 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                   Contacting Zainab
                 </div>
                 <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
-                  <button
-                    onClick={onOpenEmailModal}
-                    className="p-1.5 bg-[#141e33] hover:bg-[#1f2e4d] border border-[#2f3e63] text-[#8ea2c9] hover:text-white flex items-center gap-1.5 font-bold cursor-pointer text-left"
+                  <a
+                    href="#contact"
+                    className="p-1.5 bg-[#141e33] hover:bg-[#1f2e4d] border border-[#2f3e63] text-[#8ea2c9] hover:text-white flex items-center gap-1.5 font-bold text-left transition-colors"
                   >
-                    <Mail className="w-3.5 h-3.5 shrink-0" /> Send Message
-                  </button>
+                    <Mail className="w-3.5 h-3.5 shrink-0 text-[#8ea2c9]" /> Send Message
+                  </a>
                   <button
                     onClick={handleAddFriend}
                     className="p-1.5 bg-[#141e33] hover:bg-[#1f2e4d] border border-[#2f3e63] text-[#8ea2c9] hover:text-white flex items-center gap-1.5 font-bold cursor-pointer text-left"
@@ -575,10 +604,20 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                 </div>
               </div>
 
-              {/* MySpace URL */}
-              <div className="text-[11px] font-mono bg-[#090f1d] border border-[#2f3e63] p-2 text-center text-[#c7ccd6]">
-                <strong className="text-white">MySpace URL:</strong><br />
-                <span className="text-[#8ea2c9] select-all">http://myspace.com/zainab_faisal</span>
+              {/* MySpace URL & Quick Contact Link */}
+              <div className="text-[11px] font-mono bg-[#090f1d] border border-[#2f3e63] p-2 space-y-1.5 text-center text-[#c7ccd6]">
+                <div>
+                  <strong className="text-white">MySpace URL:</strong><br />
+                  <span className="text-[#8ea2c9] select-all">http://myspace.com/zainab_faisal</span>
+                </div>
+                <div className="pt-1 border-t border-[#253352] flex items-center justify-center gap-2">
+                  <a
+                    href="#contact"
+                    className="text-[#8ea2c9] hover:underline font-bold flex items-center gap-1 text-[10px]"
+                  >
+                    <Mail className="w-3 h-3" /> [ Jump to Contact Info ]
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -586,7 +625,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
             <div className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000]">
               <div className="bg-[#182542] px-3 py-1.5 font-mono font-bold text-xs text-[#eef1f7] border-b border-[#2f3e63] flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-amber-300" />
+                  <Radio className="w-3.5 h-3.5 text-[#8ea2c9]" />
                   <span>Zainab's Music Player (v2.0)</span>
                 </div>
                 <span className="text-[9px] text-emerald-400 font-mono">[ 128 kbps mp3 ]</span>
@@ -602,9 +641,9 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                   {/* Retro Equalizer Bars */}
                   <div className="flex items-end gap-0.5 h-4 shrink-0">
                     <span className="w-1 bg-[#8ea2c9] animate-bounce" style={{ height: '60%', animationDelay: '0.1s' }} />
-                    <span className="w-1 bg-amber-300 animate-bounce" style={{ height: '100%', animationDelay: '0.3s' }} />
-                    <span className="w-1 bg-cyan-400 animate-bounce" style={{ height: '40%', animationDelay: '0.2s' }} />
-                    <span className="w-1 bg-pink-400 animate-bounce" style={{ height: '80%', animationDelay: '0.4s' }} />
+                    <span className="w-1 bg-[#8ea2c9] animate-bounce" style={{ height: '100%', animationDelay: '0.3s' }} />
+                    <span className="w-1 bg-blue-400 animate-bounce" style={{ height: '40%', animationDelay: '0.2s' }} />
+                    <span className="w-1 bg-emerald-400 animate-bounce" style={{ height: '80%', animationDelay: '0.4s' }} />
                   </div>
                 </div>
 
@@ -631,32 +670,34 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
             <div id="interests" className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000]">
               <div className="bg-[#182542] px-3 py-1.5 font-mono font-bold text-xs text-[#eef1f7] border-b border-[#2f3e63] flex items-center justify-between">
                 <span>Zainab's Interests</span>
-                <span className="text-[10px] text-[#8ea2c9]">~*~ faves ~*~</span>
+                <span className="text-[10px] text-[#8ea2c9]">~*~ faves & curiosities ~*~</span>
               </div>
               <div className="p-4 space-y-3 text-xs font-mono">
                 <div className="border-b border-[#212c47] pb-2">
-                  <strong className="text-[#8ea2c9] block mb-0.5">General</strong>
+                  <strong className="text-[#8ea2c9] block mb-0.5">★ General</strong>
                   <p className="text-[#c7ccd6] leading-relaxed">
                     computers, AI systems, staying up way 2 late, low-level CPU stuff, networks, finding bugs where there definitely shouldn't be bugs lol
                   </p>
                 </div>
                 <div className="border-b border-[#212c47] pb-2">
-                  <strong className="text-[#8ea2c9] block mb-0.5">Music</strong>
+                  <strong className="text-[#8ea2c9] block mb-0.5">★ Music</strong>
                   <p className="text-[#c7ccd6] leading-relaxed">
                     the same 3 songs on repeat, indie rock, lo-fi, synthwave, anything that plays while i stare at code for 4 hours
                   </p>
                 </div>
-                <div className="border-b border-[#212c47] pb-2">
-                  <strong className="text-[#8ea2c9] block mb-0.5">Movies / Shows</strong>
-                  <p className="text-[#c7ccd6] leading-relaxed">
-                    mr robot, the matrix, sci-fi movies where the terminal screens actually make sense lol
-                  </p>
-                </div>
                 <div>
-                  <strong className="text-[#8ea2c9] block mb-0.5">Heroes</strong>
-                  <p className="text-[#c7ccd6] leading-relaxed">
-                    ada lovelace, grace hopper, whoever invented ctrl+z, that one person on stackoverflow who answered my exact error in 2011 &lt;3
-                  </p>
+                  <strong className="text-[#8ea2c9] block mb-0.5">★ Movies & Stuff I Watch</strong>
+                  <div className="space-y-2 text-[#c7ccd6] leading-relaxed text-[11px]">
+                    <p>
+                      i don't actually watch that much stuff tbh. mostly horror, thrillers where everyone makes increasingly questionable decisions (loved <em>Hush</em>), and crime documentaries, scams, weird cases, and psychology where something makes me go <span className="text-[#eef1f7]">"wait... HOW did that happen?"</span>
+                    </p>
+                    <p>
+                      then on the complete other end of the spectrum: occasionally Disney, occasionally Barbie. please do not ask me to explain the range lol
+                    </p>
+                    <p>
+                      also <em>Veritasium</em> on YouTube for science experiments, weird physics questions, and "wait, how does that actually work?" stuff.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -685,28 +726,28 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
 
             {/* 5. Comedic Observational Theories Box */}
             <div id="theories" className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000]">
-              <div className="bg-[#182542] px-3 py-1.5 font-mono font-bold text-xs text-pink-300 border-b border-[#2f3e63] flex items-center justify-between">
+              <div className="bg-[#182542] px-3 py-1.5 font-mono font-bold text-xs text-[#8ea2c9] border-b border-[#2f3e63] flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <Lightbulb className="w-3.5 h-3.5 text-amber-300" />
+                  <Lightbulb className="w-3.5 h-3.5 text-[#8ea2c9]" />
                   <span>Stupid Theories I'm Convinced Of</span>
                 </div>
                 <span className="text-[9px] text-zinc-400">100% peer reviewed</span>
               </div>
               <div className="p-3.5 space-y-2.5 font-mono text-xs">
                 <div className="p-2 bg-[#090f1d] border border-[#253352] space-y-1">
-                  <strong className="text-amber-300 block text-[11px]">1. The Stare Method:</strong>
+                  <strong className="text-[#8ea2c9] block text-[11px]">1. The Stare Method:</strong>
                   <p className="text-[#c7ccd6] text-[11px]">
                     If you stare at the compiler error for 3 minutes without touching the keyboard, it gets nervous and fixes itself.
                   </p>
                 </div>
                 <div className="p-2 bg-[#090f1d] border border-[#253352] space-y-1">
-                  <strong className="text-cyan-300 block text-[11px]">2. Observer Effect:</strong>
+                  <strong className="text-[#8ea2c9] block text-[11px]">2. Observer Effect:</strong>
                   <p className="text-[#c7ccd6] text-[11px]">
                     Code runs 40% faster when nobody is watching you demo it. The second someone stands behind you, it crashes immediately.
                   </p>
                 </div>
                 <div className="p-2 bg-[#090f1d] border border-[#253352] space-y-1">
-                  <strong className="text-emerald-300 block text-[11px]">3. The 2AM Rule:</strong>
+                  <strong className="text-emerald-400 block text-[11px]">3. The 2AM Rule:</strong>
                   <p className="text-[#c7ccd6] text-[11px]">
                     Any solution thought of between 1:00 AM and 4:00 AM will look like ancient alien hieroglyphics by 9:00 AM.
                   </p>
@@ -717,10 +758,10 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
             {/* 6. Retro Badges & Fictional Stalker Counter */}
             <div className="bg-[#0e1628] border-2 border-[#2f3e63] p-3 shadow-[4px_4px_0px_0px_#000] text-center space-y-3 font-mono">
               <div className="flex flex-wrap items-center justify-center gap-1.5 text-[9px] font-bold">
-                <span className="px-2 py-0.5 bg-black border border-[#8ea2c9] text-[#8ea2c9]">☕ 100% CHAI POWERED</span>
+                <span className="px-2 py-0.5 bg-black border border-[#8ea2c9] text-[#8ea2c9]">☕ 100% COFFEE POWERED</span>
                 <span className="px-2 py-0.5 bg-black border border-emerald-400 text-emerald-400">✓ PYTHON & C++ VALID</span>
-                <span className="px-2 py-0.5 bg-black border border-pink-400 text-pink-300">★ 800x600 RECOMMENDED</span>
-                <span className="px-2 py-0.5 bg-black border border-amber-400 text-amber-300">🚧 UNDER CONSTRUCTION ALWAYS 🚧</span>
+                <span className="px-2 py-0.5 bg-black border border-[#3b4d75] text-[#8ea2c9]">★ 800x600 RECOMMENDED</span>
+                <span className="px-2 py-0.5 bg-black border border-[#8ea2c9] text-[#8ea2c9]">🚧 UNDER CONSTRUCTION ALWAYS 🚧</span>
               </div>
 
               <div className="pt-2 border-t border-[#212c47] space-y-1">
@@ -793,10 +834,10 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
             </div>
 
             {/* 2. "PAST ME vs CURRENT ME" (Younger Zainab as a Recurring Comedic Character) */}
-            <div id="pastvspresent" className="bg-[#0e1628] border-2 border-amber-300/80 shadow-[4px_4px_0px_0px_#000]">
-              <div className="bg-[#1a253e] px-4 py-2 font-mono font-bold text-sm text-amber-300 border-b border-amber-300/40 flex items-center justify-between">
+            <div id="pastvspresent" className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000]">
+              <div className="bg-[#182542] px-4 py-2 font-mono font-bold text-sm text-[#8ea2c9] border-b border-[#2f3e63] flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <Flame className="w-4 h-4 text-amber-300" />
+                  <Flame className="w-4 h-4 text-[#8ea2c9]" />
                   <span>PAST ME vs CURRENT ME (a tragedy in 4 acts)</span>
                 </div>
                 <span className="text-[10px] text-zinc-400 font-mono">[ character study ]</span>
@@ -814,7 +855,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                       onClick={() => setActiveDialogueIndex(idx)}
                       className={`px-2.5 py-1 text-[11px] font-bold cursor-pointer transition-colors ${
                         activeDialogueIndex === idx
-                          ? 'bg-amber-300 text-black shadow-[2px_2px_0px_0px_#000]'
+                          ? 'bg-[#8ea2c9] text-black shadow-[2px_2px_0px_0px_#000]'
                           : 'bg-[#090f1d] text-[#8ea2c9] border border-[#2f3e63] hover:bg-[#141e35]'
                       }`}
                     >
@@ -839,14 +880,14 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                   </div>
 
                   {/* Current Me Card */}
-                  <div className="p-3.5 bg-[#121a2f] border-2 border-amber-300/70 space-y-2 relative">
-                    <span className="px-2 py-0.5 bg-amber-300 text-black font-bold text-[9px] uppercase">
+                  <div className="p-3.5 bg-[#121a2f] border-2 border-[#8ea2c9]/60 space-y-2 relative">
+                    <span className="px-2 py-0.5 bg-[#8ea2c9] text-black font-bold text-[9px] uppercase">
                       {DIALOGUES[activeDialogueIndex].current.speaker}
                     </span>
                     <p className="text-[#eef1f7] text-xs font-sans leading-relaxed">
                       "{DIALOGUES[activeDialogueIndex].current.text}"
                     </p>
-                    <div className="text-[10px] text-amber-300 italic border-t border-[#212c47] pt-1.5">
+                    <div className="text-[10px] text-[#8ea2c9] italic border-t border-[#212c47] pt-1.5">
                       {DIALOGUES[activeDialogueIndex].current.reaction}
                     </div>
                   </div>
@@ -948,7 +989,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                   </div>
 
                   <div className="bg-[#090f1d] border border-[#253352] p-3 space-y-1.5">
-                    <div className="flex items-center justify-between text-cyan-400 font-bold">
+                    <div className="flex items-center justify-between text-[#8ea2c9] font-bold">
                       <span>LAYER 3: AI & LLM Architectures</span>
                       <span className="text-[10px] text-zinc-500">my current obsession</span>
                     </div>
@@ -962,7 +1003,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                   </div>
 
                   <div className="bg-[#090f1d] border border-[#253352] p-3 space-y-1.5">
-                    <div className="flex items-center justify-between text-purple-400 font-bold">
+                    <div className="flex items-center justify-between text-[#8ea2c9] font-bold">
                       <span>LAYER 4: Networks & Security Curiosity</span>
                       <span className="text-[10px] text-zinc-500">watching packets fly</span>
                     </div>
@@ -1080,7 +1121,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                       <p className="text-[#c7ccd6] leading-relaxed">{activeProject.problem}</p>
                     </div>
                     <div className="space-y-1">
-                      <strong className="font-mono text-cyan-400 block font-bold">how i did it:</strong>
+                      <strong className="font-mono text-[#8ea2c9] block font-bold">how i did it:</strong>
                       <p className="text-[#c7ccd6] leading-relaxed">{activeProject.approach}</p>
                     </div>
                   </div>
@@ -1092,7 +1133,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                       <p className="text-[#c7ccd6] leading-relaxed">{activeProject.result}</p>
                     </div>
                     <div className="space-y-1">
-                      <strong className="font-mono text-purple-400 block font-bold">random takeaway:</strong>
+                      <strong className="font-mono text-[#8ea2c9] block font-bold">random takeaway:</strong>
                       <p className="text-[#c7ccd6] leading-relaxed">{activeProject.learned}</p>
                     </div>
                   </div>
@@ -1192,11 +1233,232 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
               </div>
             </div>
 
-            {/* 6. "things i'm falling down a rabbit hole about" (Panaversity & Certifications) */}
-            <div className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000]">
+            {/* 6. "rabbit holes i fell into" (things i probably should not have thought about this much) */}
+            <div id="rabbitholes" className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000] scroll-mt-6">
+              <div className="bg-[#182542] px-4 py-2 font-mono font-bold text-sm text-[#eef1f7] border-b border-[#2f3e63] flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-[#8ea2c9]" />
+                  <span>xX_rabbit holes i fell into_Xx</span>
+                </div>
+                <span className="text-xs text-[#8ea2c9]">~*~ things i probably should not have thought about this much ~*~</span>
+              </div>
+              
+              <div className="p-5 space-y-4 font-mono text-xs">
+                {/* Spiral flow banner */}
+                <div className="p-2.5 bg-[#090f1d] border border-dashed border-[#3b4d75] text-[#c7ccd6] text-[11px] flex items-center gap-2 flex-wrap justify-between">
+                  <div className="flex items-center gap-1.5 text-[#eef1f7]">
+                    <span className="text-amber-400">★</span>
+                    <span>opened 1 question</span>
+                    <span className="text-[#8ea2c9]">→</span>
+                    <span>thought about it for too long</span>
+                    <span className="text-[#8ea2c9]">→</span>
+                    <span>opened 47 tabs</span>
+                    <span className="text-[#8ea2c9]">→</span>
+                    <span className="text-pink-300">ended up here...</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 bg-[#141f36] border border-[#2f3e63] text-[9px] text-[#8ea2c9]">
+                    [ 2AM_SPIRAL_DUMP ]
+                  </span>
+                </div>
+
+                {/* Rabbit Hole Cards Scrapbook Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                  
+                  {/* Item 1 */}
+                  <div className="p-3 bg-[#090f1d] border-2 border-[#253352] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#1f2c4a] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-[#141f36] text-[#8ea2c9] font-bold border border-[#2f3e63]">
+                        RABBIT HOLE #01
+                      </span>
+                      <span className="text-zinc-400">[ RESEARCH REQUIRED ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug">
+                      “how much can you actually find out about someone online?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ this started normally... then got existential fast.
+                    </div>
+                  </div>
+
+                  {/* Item 2 */}
+                  <div className="p-3 bg-[#090f1d] border-2 border-[#253352] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#1f2c4a] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-[#141f36] text-amber-300 font-bold border border-[#2f3e63]">
+                        2AM THOUGHT
+                      </span>
+                      <span className="text-zinc-400">[ INFINITE RECURSION ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug">
+                      “why do i overthink literally everything?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ currently overthinking the fact that i'm overthinking about overthinking.
+                    </div>
+                  </div>
+
+                  {/* Item 3 */}
+                  <div className="p-3 bg-[#090f1d] border-2 border-[#253352] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#1f2c4a] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-[#141f36] text-[#8ea2c9] font-bold border border-[#2f3e63]">
+                        WHY DID I THINK OF THIS
+                      </span>
+                      <span className="text-zinc-400">[ UNRESOLVED ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug">
+                      “why does my brain do this?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ no official answer was found in any documentation.
+                    </div>
+                  </div>
+
+                  {/* Item 4 */}
+                  <div className="p-3 bg-[#090f1d] border-2 border-[#253352] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#1f2c4a] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-[#141f36] text-rose-300 font-bold border border-[#2f3e63]">
+                        BIOLOGICAL ANOMALY
+                      </span>
+                      <span className="text-rose-400 font-bold">[ ??? ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug">
+                      “why do my eyeballs feel like they're tickling?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ WebMD was NOT consulted for my own safety.
+                    </div>
+                  </div>
+
+                  {/* Item 5 - Questionable Idea 1 */}
+                  <div className="p-3 bg-[#12182b] border-2 border-amber-500/50 shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-amber-400 transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#293654] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
+                        QUESTIONABLE IDEA #01
+                      </span>
+                      <span className="px-1.5 py-0.2 bg-red-950 text-red-300 border border-red-500/40 font-bold">
+                        BAD IDEA???
+                      </span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug uppercase tracking-tight">
+                      “CAN I MAKE A TOOL THAT CAN CUT THROUGH TOR'S VPN?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-amber-300/80 italic flex items-center justify-between">
+                      <span>↳ wait could you even... no go to sleep.</span>
+                      <span className="text-red-400 not-italic font-bold text-[9px]">[ probably don't ]</span>
+                    </div>
+                  </div>
+
+                  {/* Item 6 - Questionable Idea 2 */}
+                  <div className="p-3 bg-[#12182b] border-2 border-amber-500/50 shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-amber-400 transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#293654] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
+                        QUESTIONABLE IDEA #02
+                      </span>
+                      <span className="px-1.5 py-0.2 bg-red-950 text-red-300 border border-red-500/40 font-bold">
+                        🚨 ESCALATION
+                      </span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug uppercase tracking-tight">
+                      “WHAT IF I MAKE AN OSINT TOOL THAT CAN GET ANYONE'S INFO ON THE DARK WEB?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-amber-300/80 italic">
+                      ↳ yeah so that escalated quickly lol. (curiosity level: slightly alarming)
+                    </div>
+                  </div>
+
+                  {/* Item 7 - DigAI on Tor */}
+                  <div className="p-3 bg-[#090f1d] border-2 border-[#253352] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#1f2c4a] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-[#141f36] text-emerald-400 font-bold border border-[#2f3e63]">
+                        3AM EXPERIMENT
+                      </span>
+                      <span className="text-zinc-400">[ THEORETICAL ONLY ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug uppercase tracking-tight">
+                      “CAN I USE DIGAI ON TOR TO HACK?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ (calm down Zainab, DigAI is a computer vision digit model lol)
+                    </div>
+                  </div>
+
+                  {/* Item 8 - AI Not Lying */}
+                  <div className="p-3 bg-[#090f1d] border-2 border-[#253352] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#1f2c4a] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-[#141f36] text-[#8ea2c9] font-bold border border-[#2f3e63]">
+                        RAG / LLM REALITY
+                      </span>
+                      <span className="text-emerald-400 font-bold">[ GUARDRAILS ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug uppercase tracking-tight">
+                      “CAN AI JUST… NOT LIE?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ me arguing with temperature controls & hallucinations at 2:47 AM.
+                    </div>
+                  </div>
+
+                  {/* Item 9 - SQA Bug Philosophical */}
+                  <div className="p-3 bg-[#090f1d] border-2 border-[#253352] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors md:col-span-2">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#1f2c4a] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-[#141f36] text-[#8ea2c9] font-bold border border-[#2f3e63]">
+                        SQA LOGIC CRISIS
+                      </span>
+                      <span className="text-zinc-400">[ PHILOSOPHICAL BUG REPORT ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug uppercase tracking-tight">
+                      “IF THERE’S NO DATA, IS ‘NO RECORDS FOUND’ ACTUALLY A BUG?”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ QA brain destroying standard software logic for no good reason. is empty an error or an existential state?
+                    </div>
+                  </div>
+
+                  {/* Item 10 - Crime Rant 1 */}
+                  <div className="p-3.5 bg-[#131b2e] border-2 border-[#3b4d75] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#253352] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-red-900/40 text-red-300 font-bold border border-red-500/30">
+                        CRIME RANT #01
+                      </span>
+                      <span className="text-zinc-400">[ FORENSIC FRUSTRATION ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug uppercase tracking-tight">
+                      “WHY DO KILLERS LEAVE BEHIND SO MUCH EVIDENCE? IF I WAS ONE I WOULD LEAVE NONE!”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ watching a crime documentary and getting actively angry at their amateur forensic oversights.
+                    </div>
+                  </div>
+
+                  {/* Item 11 - Crime Rant 2 */}
+                  <div className="p-3.5 bg-[#131b2e] border-2 border-[#3b4d75] shadow-[2px_2px_0px_0px_#000] space-y-2 relative group hover:border-[#8ea2c9] transition-colors">
+                    <div className="flex items-center justify-between text-[9px] border-b border-[#253352] pb-1.5">
+                      <span className="px-1.5 py-0.5 bg-red-900/40 text-red-300 font-bold border border-red-500/30">
+                        CRIME RANT #02
+                      </span>
+                      <span className="text-zinc-400">[ BAD PLANNING CRITIQUE ]</span>
+                    </div>
+                    <strong className="text-xs sm:text-[13px] text-[#eef1f7] block leading-snug uppercase tracking-tight">
+                      “WHY DO PEOPLE DECIDE TO MURDER AND THEN GET CAUGHT BY THE MOST STUPID MISTAKE THEY MADE? IT PISSES ME OFF!”
+                    </strong>
+                    <div className="pt-1 border-t border-[#1a253e] text-[10px] text-[#8ea2c9] italic">
+                      ↳ you planned an entire multi-step felony and forgot about the gas station receipt in your jacket??? REALLY???
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Tiny Footer Note */}
+                <div className="pt-2 text-center text-[10px] text-zinc-500 italic border-t border-[#212c47]">
+                  ~*~ i should have gone to sleep at 11pm but here we are ~*~
+                </div>
+              </div>
+            </div>
+
+            {/* 7. "what i'm currently exploring / learning" (Panaversity & Certifications) */}
+            <div id="exploring" className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000] scroll-mt-6">
               <div className="bg-[#182542] px-4 py-2 font-mono font-bold text-sm text-[#eef1f7] border-b border-[#2f3e63] flex items-center justify-between">
-                <span>things i'm falling down a rabbit hole about</span>
-                <span className="text-xs text-[#8ea2c9]">~*~ exploring rn ~*~</span>
+                <span>what i'm currently exploring / learning</span>
+                <span className="text-xs text-[#8ea2c9]">~*~ official learning ~*~</span>
               </div>
               <div className="p-5 space-y-4 font-mono text-xs">
                 
@@ -1258,7 +1520,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-amber-300">future: agentic coordination & software testing</span>
+                    <span className="text-[10px] font-bold text-[#8ea2c9]">future: agentic coordination & software testing</span>
                     <p className="text-[#c7ccd6] text-[11px] font-sans">
                       autonomous agent workflows, rigorous software testing automation, and building systems that actually survive real-world chaos.
                     </p>
@@ -1267,7 +1529,122 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
               </div>
             </div>
 
-            {/* 8. Status Updates & Guestbook */}
+            {/* 8. Dedicated Contact Information & Socials Section */}
+            <div id="contact" className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000] scroll-mt-6">
+              <div className="bg-[#182542] px-4 py-2 font-mono font-bold text-sm text-[#eef1f7] border-b border-[#2f3e63] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-[#8ea2c9]" />
+                  <span>xX_contact info & how 2 reach me_Xx</span>
+                </div>
+                <span className="text-xs text-[#8ea2c9]">~*~ official connections ~*~</span>
+              </div>
+              <div className="p-5 space-y-4 font-mono text-xs">
+                <p className="text-zinc-300 font-sans text-xs">
+                  wanna talk about AI systems, low-level computers, or collaborate on a project? here's where you can find me:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Email Card */}
+                  <div className="p-3.5 bg-[#090f1d] border-2 border-[#2f3e63] flex flex-col justify-between space-y-3 shadow-[2px_2px_0px_0px_#000]">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] px-1.5 py-0.5 bg-[#141f36] text-[#8ea2c9] font-bold border border-[#2f3e63] inline-block">
+                          PRIMARY EMAIL
+                        </span>
+                        <Mail className="w-3.5 h-3.5 text-[#8ea2c9]" />
+                      </div>
+                      <strong className="text-xs text-[#eef1f7] block select-all font-mono break-all pt-1">
+                        xanab2105@gmail.com
+                      </strong>
+                      <span className="text-[10px] text-zinc-400 block font-sans">
+                        direct personal inbox
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 pt-2 border-t border-[#1f2e4d]">
+                      <a
+                        href="mailto:xanab2105@gmail.com"
+                        className="w-full py-1.5 px-2 bg-[#8ea2c9] hover:bg-[#a3b6da] text-black font-bold text-[10px] flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <Mail className="w-3 h-3" /> Open in Mail App
+                      </a>
+                      <button
+                        onClick={handleCopyEmail}
+                        className="w-full py-1.5 px-2 bg-[#141e33] hover:bg-[#1f2e4d] border border-[#2f3e63] text-[#8ea2c9] hover:text-white font-bold text-[10px] flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                      >
+                        {copiedEmail ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        {copiedEmail ? 'Copied to Clipboard!' : 'Copy Email'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* LinkedIn Card */}
+                  <div className="p-3.5 bg-[#090f1d] border-2 border-[#2f3e63] flex flex-col justify-between space-y-3 shadow-[2px_2px_0px_0px_#000]">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] px-1.5 py-0.5 bg-[#141f36] text-blue-400 font-bold border border-[#2f3e63] inline-block">
+                          LINKEDIN
+                        </span>
+                        <Linkedin className="w-3.5 h-3.5 text-blue-400" />
+                      </div>
+                      <strong className="text-xs text-[#eef1f7] block font-mono truncate pt-1">
+                        Zainab Faisal
+                      </strong>
+                      <span className="text-[10px] text-zinc-400 block font-sans">
+                        professional network & updates
+                      </span>
+                    </div>
+
+                    <div className="pt-2 border-t border-[#1f2e4d]">
+                      <a
+                        href="https://www.linkedin.com/in/zainab-faisal-001320406/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-1.5 px-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] flex items-center justify-center gap-1 transition-colors"
+                      >
+                        <Linkedin className="w-3 h-3" /> Visit LinkedIn <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* GitHub Card */}
+                  <div className="p-3.5 bg-[#090f1d] border-2 border-[#2f3e63] flex flex-col justify-between space-y-3 shadow-[2px_2px_0px_0px_#000]">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] px-1.5 py-0.5 bg-[#141f36] text-[#8ea2c9] font-bold border border-[#2f3e63] inline-block">
+                          GITHUB
+                        </span>
+                        <Github className="w-3.5 h-3.5 text-[#8ea2c9]" />
+                      </div>
+                      <strong className="text-xs text-[#eef1f7] block font-mono truncate pt-1">
+                        zainabfaisal
+                      </strong>
+                      <span className="text-[10px] text-zinc-400 block font-sans">
+                        open source code & experiments
+                      </span>
+                    </div>
+
+                    <div className="pt-2 border-t border-[#1f2e4d]">
+                      <a
+                        href="https://github.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-1.5 px-2 bg-[#233559] hover:bg-[#2d4472] text-white font-bold text-[10px] flex items-center justify-center gap-1 transition-colors border border-[#3b4d75]"
+                      >
+                        <Github className="w-3 h-3" /> Visit GitHub <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-2.5 bg-[#141f36] border border-[#3b4d75] text-[11px] text-[#c7ccd6] text-center space-y-0.5 font-mono">
+                  <p>★ <strong>response time:</strong> usually within 24h (or whenever i wake up from late-night debugging lol) ★</p>
+                  <p className="text-[10px] text-[#8ea2c9]">feel free to reach out for tech collabs, AI research, or just to say hi &lt;3</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 9. Status Updates & Guestbook */}
             <div id="guestbook">
               <GuestbookSection />
             </div>

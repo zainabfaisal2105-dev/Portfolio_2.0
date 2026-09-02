@@ -369,7 +369,7 @@ export const GuestbookSection: React.FC = () => {
                 setShowOwnerPostModal(true);
                 setOwnerPostError('');
               }}
-              className="px-3 py-1 bg-amber-300 hover:bg-amber-200 text-black font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_#000]"
+              className="px-3 py-1 bg-[#8ea2c9] hover:bg-[#a3b6da] text-black font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_#000]"
             >
               <Lock className="w-3.5 h-3.5" />
               + Post as Zainab
@@ -399,8 +399,8 @@ export const GuestbookSection: React.FC = () => {
                 onClick={() => setActiveTab('zainab_posts')}
                 className={`px-3 py-1 text-xs font-bold cursor-pointer transition-colors flex items-center gap-1 ${
                   activeTab === 'zainab_posts'
-                    ? 'bg-amber-300 text-black shadow-[2px_2px_0px_0px_#000]'
-                    : 'bg-[#141e33] text-amber-300/80 hover:bg-[#1c2944] border border-[#2f3e63]'
+                    ? 'bg-[#8ea2c9] text-black shadow-[2px_2px_0px_0px_#000]'
+                    : 'bg-[#141e33] text-[#8ea2c9] hover:bg-[#1c2944] border border-[#2f3e63]'
                 }`}
               >
                 <Sparkles className="w-3 h-3" />
@@ -503,10 +503,10 @@ export const GuestbookSection: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-[#0e1628] border-2 border-amber-300 shadow-[6px_6px_0px_0px_#000] p-5 space-y-4"
+              className="w-full max-w-lg bg-[#0e1628] border-2 border-[#8ea2c9] shadow-[6px_6px_0px_0px_#000] p-5 space-y-4"
             >
-              <div className="flex items-center justify-between border-b border-amber-300/40 pb-2">
-                <div className="flex items-center gap-2 text-amber-300 font-bold text-sm">
+              <div className="flex items-center justify-between border-b border-[#3b4d75] pb-2">
+                <div className="flex items-center gap-2 text-[#8ea2c9] font-bold text-sm">
                   <ShieldCheck className="w-4 h-4" />
                   <span>NEW OFFICIAL POST FROM ZAINAB</span>
                 </div>
@@ -536,7 +536,7 @@ export const GuestbookSection: React.FC = () => {
                     value={ownerPostMood}
                     onChange={(e) => setOwnerPostMood(e.target.value)}
                     placeholder="e.g. ⚡ shipping code / 📚 study mode"
-                    className="w-full px-2.5 py-1.5 bg-[#090f1d] border border-amber-300/40 text-[#eef1f7] outline-none focus:border-amber-300 text-xs"
+                    className="w-full px-2.5 py-1.5 bg-[#090f1d] border border-[#2f3e63] text-[#eef1f7] outline-none focus:border-[#8ea2c9] text-xs"
                   />
                 </div>
 
@@ -548,7 +548,7 @@ export const GuestbookSection: React.FC = () => {
                     value={ownerPostContent}
                     onChange={(e) => setOwnerPostContent(e.target.value)}
                     placeholder="Write what you're working on, announcements, or discussion starters..."
-                    className="w-full px-2.5 py-2 bg-[#090f1d] border border-amber-300/40 text-[#eef1f7] outline-none focus:border-amber-300 text-xs resize-none"
+                    className="w-full px-2.5 py-2 bg-[#090f1d] border border-[#2f3e63] text-[#eef1f7] outline-none focus:border-[#8ea2c9] text-xs resize-none"
                   />
                 </div>
 
@@ -560,11 +560,11 @@ export const GuestbookSection: React.FC = () => {
                     value={ownerPasscode}
                     onChange={(e) => setOwnerPasscode(e.target.value)}
                     placeholder="Enter author passcode"
-                    className="w-full px-2.5 py-2 bg-[#090f1d] border border-amber-300/40 text-[#eef1f7] outline-none focus:border-amber-300 text-xs"
+                    className="w-full px-2.5 py-2 bg-[#090f1d] border border-[#2f3e63] text-[#eef1f7] outline-none focus:border-[#8ea2c9] text-xs"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-amber-300/20">
+                <div className="flex justify-end gap-2 pt-2 border-t border-[#2f3e63]">
                   <button
                     type="button"
                     onClick={() => setShowOwnerPostModal(false)}
@@ -575,7 +575,7 @@ export const GuestbookSection: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isPublishingOwner}
-                    className="px-5 py-2 bg-amber-300 hover:bg-amber-200 text-black font-bold text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-[2px_2px_0px_0px_#000]"
+                    className="px-5 py-2 bg-[#8ea2c9] hover:bg-[#a3b6da] text-black font-bold text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-[2px_2px_0px_0px_#000]"
                   >
                     <Send className="w-3.5 h-3.5" />
                     {isPublishingOwner ? 'Publishing...' : 'Publish Post'}
@@ -607,7 +607,7 @@ export const GuestbookSection: React.FC = () => {
               key={post.id}
               className={`border-2 shadow-[4px_4px_0px_0px_#000] p-4.5 transition-all ${
                 post.isOwnerPost
-                  ? 'bg-[#12192c] border-amber-300/70'
+                  ? 'bg-[#12192c] border-[#8ea2c9]/70'
                   : 'bg-[#0e1628] border-[#2f3e63]'
               }`}
             >
@@ -616,7 +616,7 @@ export const GuestbookSection: React.FC = () => {
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold text-sm text-[#eef1f7] flex items-center gap-1.5">
                     {post.isOwnerPost ? (
-                      <Pin className="w-3.5 h-3.5 text-amber-300" />
+                      <Pin className="w-3.5 h-3.5 text-[#8ea2c9]" />
                     ) : (
                       <User className="w-3.5 h-3.5 text-[#8ea2c9]" />
                     )}
@@ -624,7 +624,7 @@ export const GuestbookSection: React.FC = () => {
                   </span>
 
                   {post.isOwnerPost && (
-                    <span className="px-2 py-0.5 bg-amber-300 text-black font-bold text-[9px] uppercase tracking-wider">
+                    <span className="px-2 py-0.5 bg-[#8ea2c9] text-black font-bold text-[9px] uppercase tracking-wider">
                       ★ AUTHOR BROADCAST ★
                     </span>
                   )}
@@ -658,17 +658,17 @@ export const GuestbookSection: React.FC = () => {
                       key={rep.id}
                       className={`p-2.5 border text-xs ${
                         rep.isOwner
-                          ? 'bg-[#182542] border-amber-300/60 shadow-[2px_2px_0px_0px_#000]'
+                          ? 'bg-[#182542] border-[#8ea2c9]/60 shadow-[2px_2px_0px_0px_#000]'
                           : 'bg-[#090f1d] border-[#2f3e63]'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <div className="flex items-center gap-1.5">
-                          <span className={`font-bold ${rep.isOwner ? 'text-amber-300' : 'text-[#8ea2c9]'}`}>
+                          <span className={`font-bold ${rep.isOwner ? 'text-[#8ea2c9]' : 'text-[#8ea2c9]'}`}>
                             {rep.author}
                           </span>
                           {rep.isOwner && (
-                            <span className="px-1.5 py-0.2 bg-amber-300 text-black font-bold text-[8px] uppercase">
+                            <span className="px-1.5 py-0.2 bg-[#8ea2c9] text-black font-bold text-[8px] uppercase">
                               ✓ Zainab
                             </span>
                           )}
@@ -703,7 +703,7 @@ export const GuestbookSection: React.FC = () => {
                     setReplyRole('owner');
                     setReplyError('');
                   }}
-                  className="px-3 py-1 bg-amber-300/90 hover:bg-amber-200 text-black font-bold text-[11px] flex items-center gap-1.5 cursor-pointer shadow-[1px_1px_0px_0px_#000]"
+                  className="px-3 py-1 bg-[#8ea2c9] hover:bg-[#a3b6da] text-black font-bold text-[11px] flex items-center gap-1.5 cursor-pointer shadow-[1px_1px_0px_0px_#000]"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Answer as Zainab
@@ -719,12 +719,12 @@ export const GuestbookSection: React.FC = () => {
                     exit={{ opacity: 0, height: 0 }}
                     className={`mt-3 p-3.5 border ${
                       replyRole === 'owner'
-                        ? 'bg-[#182542] border-amber-300/60'
+                        ? 'bg-[#182542] border-[#8ea2c9]/60'
                         : 'bg-[#090f1d] border-[#2f3e63]'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2.5">
-                      <span className={`text-[11px] font-bold ${replyRole === 'owner' ? 'text-amber-300' : 'text-[#8ea2c9]'}`}>
+                      <span className={`text-[11px] font-bold ${replyRole === 'owner' ? 'text-[#8ea2c9]' : 'text-[#8ea2c9]'}`}>
                         {replyRole === 'owner' ? '★ ANSWERING AS ZAINAB (AUTHOR)' : 'POSTING REPLY AS VISITOR'}
                       </span>
                       <button
@@ -756,7 +756,7 @@ export const GuestbookSection: React.FC = () => {
                           value={replyPasscode}
                           onChange={(e) => setReplyPasscode(e.target.value)}
                           placeholder="Enter author passcode"
-                          className="w-full px-2.5 py-1.5 bg-[#0e1628] border border-amber-300/40 text-[#eef1f7] outline-none focus:border-amber-300 text-xs"
+                          className="w-full px-2.5 py-1.5 bg-[#0e1628] border border-[#2f3e63] text-[#eef1f7] outline-none focus:border-[#8ea2c9] text-xs"
                         />
                       )}
 
@@ -778,11 +778,7 @@ export const GuestbookSection: React.FC = () => {
                         <button
                           onClick={() => handleReplySubmit(post.id)}
                           disabled={isSubmittingReply}
-                          className={`px-4 py-1.5 font-bold text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 ${
-                            replyRole === 'owner'
-                              ? 'bg-amber-300 hover:bg-amber-200 text-black'
-                              : 'bg-[#8ea2c9] hover:bg-[#a3b6da] text-black'
-                          }`}
+                          className="px-4 py-1.5 font-bold text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 bg-[#8ea2c9] hover:bg-[#a3b6da] text-black"
                         >
                           <Send className="w-3 h-3" />
                           {isSubmittingReply ? 'Submitting...' : (replyRole === 'owner' ? 'Post Answer' : 'Submit Reply')}
