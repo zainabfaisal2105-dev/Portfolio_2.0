@@ -12,12 +12,14 @@ import { CurrentlyExploring } from './components/CurrentlyExploring';
 import { ContactSection } from './components/ContactSection';
 import { GuestbookSection } from './components/GuestbookSection';
 import { Footer } from './components/Footer';
+import { MySpaceProfile } from './components/MySpaceProfile';
+import { ThemeControlWidget } from './components/ThemeControlWidget';
 import { HackingTerminalModal } from './components/HackingTerminalModal';
 import { ThemeMode } from './types';
 import { X } from 'lucide-react';
 
 export default function App() {
-  const [activeTheme, setActiveTheme] = useState<ThemeMode>('neural');
+  const [activeTheme, setActiveTheme] = useState<ThemeMode>('myspace');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
@@ -27,7 +29,7 @@ export default function App() {
       case 'y2k':
         return 'bg-[#f0e6ff] text-black selection:bg-pink-400 selection:text-black font-mono';
       case 'myspace':
-        return 'bg-gradient-to-b from-[#14161a] via-[#1a1d23] to-[#0d0e11] text-[#c7ccd6] selection:bg-[#8ea2c9] selection:text-white font-sans';
+        return 'bg-[#070b16] text-[#c7ccd6] selection:bg-[#8ea2c9] selection:text-black font-sans';
       case 'neural':
       default:
         return 'bg-[#05070c] text-zinc-100 selection:bg-cyan-500 selection:text-black font-sans';
@@ -35,52 +37,64 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 relative ${getThemeClass()} ${activeTheme === 'myspace' ? 'myspace-tiled-bg' : ''}`}>
+    <div className={`min-h-screen transition-colors duration-500 relative ${getThemeClass()}`}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
         className="relative"
       >
-        {/* Navigation Bar */}
-        <Navbar
-          activeTheme={activeTheme}
-          onThemeChange={setActiveTheme}
-          onOpenTerminal={() => setIsTerminalOpen(true)}
-          onOpenEmailModal={() => setIsEmailModalOpen(true)}
-        />
-
-        {/* Main Portfolio Sections */}
-        <main className="space-y-12">
-          <HeroSection
+        {activeTheme === 'myspace' ? (
+          /* Dedicated Authentic 2000s Personal MySpace Profile Layout */
+          <MySpaceProfile
             activeTheme={activeTheme}
+            onThemeChange={setActiveTheme}
             onOpenTerminal={() => setIsTerminalOpen(true)}
             onOpenEmailModal={() => setIsEmailModalOpen(true)}
           />
+        ) : (
+          /* Neural & Y2K Theme Section Flow */
+          <>
+            <Navbar
+              activeTheme={activeTheme}
+              onThemeChange={setActiveTheme}
+              onOpenTerminal={() => setIsTerminalOpen(true)}
+              onOpenEmailModal={() => setIsEmailModalOpen(true)}
+            />
 
-          <AboutSection activeTheme={activeTheme} />
+            <main className="space-y-12">
+              <HeroSection
+                activeTheme={activeTheme}
+                onOpenTerminal={() => setIsTerminalOpen(true)}
+                onOpenEmailModal={() => setIsEmailModalOpen(true)}
+              />
 
-          <TechJourney activeTheme={activeTheme} />
+              <AboutSection activeTheme={activeTheme} />
 
-          <SkillsSection activeTheme={activeTheme} />
+              <TechJourney activeTheme={activeTheme} />
 
-          <SecuritySection activeTheme={activeTheme} />
+              <SkillsSection activeTheme={activeTheme} />
 
-          <ProjectsSection activeTheme={activeTheme} />
+              <SecuritySection activeTheme={activeTheme} />
 
-          <AiPhilosophySection activeTheme={activeTheme} />
+              <ProjectsSection activeTheme={activeTheme} />
 
-          <CurrentlyExploring activeTheme={activeTheme} />
+              <AiPhilosophySection activeTheme={activeTheme} />
 
-          <ContactSection activeTheme={activeTheme} />
+              <CurrentlyExploring activeTheme={activeTheme} />
+            </main>
 
-          {activeTheme === 'myspace' && <GuestbookSection />}
-        </main>
+            <Footer
+              activeTheme={activeTheme}
+              onOpenTerminal={() => setIsTerminalOpen(true)}
+            />
+          </>
+        )}
 
-        {/* Footer */}
-        <Footer
+        {/* Persistent Floating Old-Web Skin Switcher Widget */}
+        <ThemeControlWidget
           activeTheme={activeTheme}
-          onOpenTerminal={() => setIsTerminalOpen(true)}
+          onThemeChange={setActiveTheme}
         />
 
         {/* Floating Hacking Terminal Modal */}
@@ -107,9 +121,7 @@ export default function App() {
               >
                 <button
                   onClick={() => setIsEmailModalOpen(false)}
-                  className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all cursor-pointer ${
-                    'bg-white/10 hover:bg-white/20 text-white'
-                  }`}
+                  className="absolute top-4 right-4 z-10 p-2 rounded-full transition-all cursor-pointer bg-white/10 hover:bg-white/20 text-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -126,3 +138,4 @@ export default function App() {
     </div>
   );
 }
+

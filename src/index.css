@@ -10,7 +10,7 @@
 .marquee-track {
   display: inline-block;
   white-space: nowrap;
-  animation: marquee-scroll 18s linear infinite;
+  animation: marquee-scroll 22s linear infinite;
 }
 
 @keyframes glitch-flicker {
@@ -24,16 +24,6 @@
   animation: glitch-flicker 0.6s steps(2, end);
 }
 
-@keyframes sparkle-spin {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.15); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-
-.sparkle-spin {
-  animation: sparkle-spin 3s ease-in-out infinite;
-}
-
 @keyframes digit-flicker {
   0%, 96%, 100% { opacity: 1; }
   97% { opacity: 0.5; }
@@ -43,41 +33,58 @@
   animation: digit-flicker 4s infinite;
 }
 
-/* ---------- MySpace.profile bold jewel-tone Y2K nostalgia utilities ---------- */
+/* ---------- MySpace authentic 2000s starry night sky ---------- */
 
-@keyframes glitter-shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 
-.myspace-glitter-bg {
-  background-image: radial-gradient(circle, rgba(255,215,0,0.55) 1px, transparent 1px),
-    radial-gradient(circle, rgba(122,14,43,0.35) 1px, transparent 1px),
-    radial-gradient(circle, rgba(15,155,110,0.3) 1px, transparent 1px);
-  background-size: 20px 20px, 30px 30px, 26px 26px;
-  background-position: 0 0, 10px 14px, 18px 4px;
-  animation: glitter-shimmer 7s ease-in-out infinite;
+@keyframes big-star-pulse-1 {
+  0%, 100% { opacity: 0.25; transform: scale(0.85) rotate(0deg); }
+  50% { opacity: 0.95; transform: scale(1.2) rotate(6deg); }
 }
 
-@keyframes gold-glow-pulse {
-  0%, 100% { text-shadow: 2px 2px 0 #000, 0 0 10px rgba(255,215,0,0.5); }
-  50% { text-shadow: 2px 2px 0 #000, 0 0 20px rgba(255,215,0,0.9); }
+@keyframes big-star-pulse-2 {
+  0%, 100% { opacity: 0.9; transform: scale(1.15) rotate(0deg); }
+  50% { opacity: 0.3; transform: scale(0.8) rotate(-6deg); }
 }
 
-.myspace-glow-text {
-  animation: gold-glow-pulse 2.5s ease-in-out infinite;
+@keyframes big-star-pulse-3 {
+  0%, 100% { opacity: 0.4; transform: scale(0.9) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.3) rotate(12deg); }
 }
 
-.myspace-bubble-heading {
-  color: #c7ccd6;
-  -webkit-text-stroke: 1.5px #000;
-  text-shadow: 2px 2px 0 #000, 4px 4px 0 rgba(122,14,43,0.6);
+.big-star-1 {
+  animation: big-star-pulse-1 4s ease-in-out infinite;
 }
 
-.myspace-card {
-  background: rgba(13,7,5,0.9);
-  border: 2px solid #c7ccd6;
-  box-shadow: 4px 4px 0px 0px #8ea2c9;
+.big-star-2 {
+  animation: big-star-pulse-2 5.5s ease-in-out infinite;
+}
+
+.big-star-3 {
+  animation: big-star-pulse-3 6.5s ease-in-out infinite;
+}
+
+.myspace-night-stars {
+  background-color: #070b16;
+  background-image:
+    radial-gradient(3px 3px at 8% 12%, #ffffff 0, transparent 100%),
+    radial-gradient(4px 4px at 88% 22%, #ffd700 0, transparent 100%),
+    radial-gradient(3.5px 3.5px at 25% 48%, #8ea2c9 0, transparent 100%),
+    radial-gradient(4px 4px at 72% 78%, #ffffff 0, transparent 100%),
+    radial-gradient(3px 3px at 45% 90%, #ffd700 0, transparent 100%),
+    radial-gradient(2px 2px at 18% 75%, #ffffff 0, transparent 100%),
+    radial-gradient(2px 2px at 60% 15%, #8ea2c9 0, transparent 100%),
+    radial-gradient(2.5px 2.5px at 92% 65%, #ffffff 0, transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 25%, #8ea2c9 0, transparent 100%),
+    radial-gradient(2px 2px at 52% 40%, #ffd700 0, transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 45%, #c7ccd6 0, transparent 100%),
+    radial-gradient(2px 2px at 12% 92%, #8ea2c9 0, transparent 100%);
+  background-size: 420px 420px;
+  background-repeat: repeat;
+  animation: twinkle 4.5s ease-in-out infinite;
 }
 
 @keyframes heart-pulse {
@@ -89,26 +96,13 @@
   animation: heart-pulse 1.4s ease-in-out infinite;
 }
 
-/* Twinkling silver starfield, evoking a navy night-sky MySpace background */
-@keyframes star-twinkle {
-  0%, 100% { opacity: 0.15; }
-  50% { opacity: 0.9; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .myspace-night-stars,
+  .myspace-heart-pulse,
+  .hit-counter-digit {
+    animation: none !important;
+  }
 }
 
-.myspace-tiled-bg {
-  background-image:
-    radial-gradient(1.5px 1.5px at 8% 12%, #eef1f7 0, transparent 60%),
-    radial-gradient(1px 1px at 22% 38%, #c7ccd6 0, transparent 60%),
-    radial-gradient(1.5px 1.5px at 38% 8%, #eef1f7 0, transparent 60%),
-    radial-gradient(1px 1px at 52% 62%, #8ea2c9 0, transparent 60%),
-    radial-gradient(1.5px 1.5px at 68% 22%, #c7ccd6 0, transparent 60%),
-    radial-gradient(1px 1px at 78% 48%, #eef1f7 0, transparent 60%),
-    radial-gradient(1.5px 1.5px at 88% 78%, #8ea2c9 0, transparent 60%),
-    radial-gradient(1px 1px at 15% 82%, #c7ccd6 0, transparent 60%),
-    radial-gradient(1.5px 1.5px at 45% 92%, #eef1f7 0, transparent 60%),
-    radial-gradient(1px 1px at 95% 15%, #c7ccd6 0, transparent 60%);
-  background-size: 320px 320px;
-  background-repeat: repeat;
-  animation: star-twinkle 4s ease-in-out infinite;
-}
 

@@ -40,7 +40,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { name: 'Security', href: '#security' },
     { name: 'AI Lab', href: '#ailab' },
     { name: 'Exploring', href: '#exploring' },
-    { name: 'Contact', href: '#contact' },
   ];
 
   const myspaceNavLinks = [
@@ -52,7 +51,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { name: 'security stuff', href: '#security' },
     { name: 'ai lab', href: '#ailab' },
     { name: 'whatever im up 2', href: '#exploring' },
-    { name: 'msg me', href: '#contact' },
     { name: 'leave a msg', href: '#guestbook' },
   ];
 
