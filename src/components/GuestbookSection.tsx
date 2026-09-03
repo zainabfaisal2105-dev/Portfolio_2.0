@@ -51,8 +51,6 @@ function timeAgo(iso: string): string {
   }
 }
 
-const STORAGE_KEY = 'zainab_wall_posts_v4';
-
 // Passcode verification helper (matches requested authorization pattern)
 function verifyOwnerPasscode(input: string): boolean {
   const clean = (input || '').trim().toLowerCase();
@@ -60,20 +58,8 @@ function verifyOwnerPasscode(input: string): boolean {
 }
 
 export const GuestbookSection: React.FC = () => {
-  const [posts, setPosts] = useState<WallPost[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          return parsed.filter((p: WallPost) => !FAKE_POST_IDS.has(p.id));
-        }
-      }
-    } catch {
-      // fallback
-    }
-    return DEFAULT_POSTS;
-  });
+  const [posts, setPosts] = useState<WallPost[]>(DEFAULT_POSTS);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
 
   const [activeTab, setActiveTab] = useState<'all' | 'zainab_posts' | 'visitor_notes'>('all');
 
@@ -102,16 +88,7 @@ export const GuestbookSection: React.FC = () => {
   const [replyError, setReplyError] = useState('');
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
-  // Sync to local storage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-    } catch {
-      // ignore
-    }
-  }, [posts]);
-
-  // Live polling: sync with server every 4 seconds so comments show in real-time across devices
+  // Live polling: fetch from shared backend database every 4 seconds
   const fetchFromServer = async () => {
     try {
       const res = await fetch('/api/guestbook/posts');
@@ -139,17 +116,13 @@ export const GuestbookSection: React.FC = () => {
                 })),
             }));
 
-          setPosts((prev) => {
-            // Keep any local-only posts that haven't synced yet
-            const localOnly = prev.filter(
-              (p) => p.id.startsWith('post_local_') && !mapped.some((mp) => mp.text === p.text)
-            );
-            return [...localOnly, ...mapped];
-          });
+          setPosts(mapped);
         }
       }
     } catch {
-      // offline / local fallback
+      // network offline
+    } finally {
+      setIsLoadingPosts(false);
     }
   };
 
@@ -175,21 +148,6 @@ export const GuestbookSection: React.FC = () => {
     setOwnerPostError('');
     setIsPublishingOwner(true);
 
-    const tempId = `post_local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const newPost: WallPost = {
-      id: tempId,
-      author: 'Zainab Faisal',
-      text: ownerPostContent.trim(),
-      isOwnerPost: true,
-      category: 'broadcast',
-      mood: ownerPostMood,
-      timestamp: new Date().toISOString(),
-      replies: [],
-    };
-
-    // Optimistically show immediately
-    setPosts((prev) => [newPost, ...prev.filter((p) => p.id !== tempId)]);
-
     try {
       const res = await fetch('/api/guestbook/posts', {
         method: 'POST',
@@ -204,28 +162,19 @@ export const GuestbookSection: React.FC = () => {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        if (data.post) {
-          setPosts((prev) =>
-            prev.map((p) =>
-              p.id === tempId
-                ? { ...p, id: data.post.id, timestamp: data.post.timestamp || p.timestamp }
-                : p
-            )
-          );
-        }
+        await fetchFromServer();
+        setOwnerPostContent('');
+        setOwnerPasscode('');
+        setShowOwnerPostModal(false);
       } else {
         const errData = await res.json().catch(() => ({}));
-        console.warn('Server broadcast warning:', errData);
+        setOwnerPostError(errData.error || 'Failed to publish post to database.');
       }
     } catch (err: any) {
-      console.warn('Sync notice:', err);
+      setOwnerPostError('Network connection error. Please try again.');
+    } finally {
+      setIsPublishingOwner(false);
     }
-
-    setOwnerPostContent('');
-    setOwnerPasscode('');
-    setShowOwnerPostModal(false);
-    setIsPublishingOwner(false);
   };
 
   // Handle Visitor Comment Submission (Freely open to everyone - no password needed!)
@@ -240,20 +189,6 @@ export const GuestbookSection: React.FC = () => {
     setIsPostingVisitor(true);
 
     const name = visitorName.trim() || 'Visitor';
-    const tempId = `post_local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const newVisitorPost: WallPost = {
-      id: tempId,
-      author: name,
-      text: visitorMessage.trim(),
-      isOwnerPost: false,
-      category: 'visitor_note',
-      mood: visitorMood,
-      timestamp: new Date().toISOString(),
-      replies: [],
-    };
-
-    // Optimistically display immediately so visitor never loses their message
-    setPosts((prev) => [newVisitorPost, ...prev.filter((p) => p.id !== tempId)]);
 
     try {
       const res = await fetch('/api/guestbook/posts', {
@@ -268,33 +203,20 @@ export const GuestbookSection: React.FC = () => {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        if (data.post) {
-          setPosts((prev) =>
-            prev.map((p) =>
-              p.id === tempId
-                ? {
-                    ...p,
-                    id: data.post.id,
-                    timestamp: data.post.timestamp || p.timestamp,
-                  }
-                : p
-            )
-          );
-        }
+        await fetchFromServer();
+        setVisitorMessage('');
+        setVisitorName('');
+        setVisitorSuccessMsg(true);
+        setTimeout(() => setVisitorSuccessMsg(false), 4000);
       } else {
         const errData = await res.json().catch(() => ({}));
-        console.warn('Visitor post server sync notice:', errData);
+        setVisitorError(errData.error || 'Failed to post comment to database. Please check your connection.');
       }
     } catch (err) {
-      console.warn('Visitor post network notice:', err);
+      setVisitorError('Network error while connecting to server. Please try again.');
+    } finally {
+      setIsPostingVisitor(false);
     }
-
-    setVisitorMessage('');
-    setVisitorName('');
-    setIsPostingVisitor(false);
-    setVisitorSuccessMsg(true);
-    setTimeout(() => setVisitorSuccessMsg(false), 4000);
   };
 
   // Handle Reply Submission (Visitor OR Zainab)
@@ -314,23 +236,6 @@ export const GuestbookSection: React.FC = () => {
     setIsSubmittingReply(true);
 
     const author = isOwner ? 'Zainab (Author)' : (replyAuthorName.trim() || 'Visitor');
-    const tempReplyId = `rep_local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const newReply: PostReply = {
-      id: tempReplyId,
-      author,
-      text: replyContent.trim(),
-      isOwner,
-      timestamp: new Date().toISOString(),
-    };
-
-    // Optimistically add reply immediately
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === postId
-          ? { ...p, replies: [...p.replies.filter((r) => r.id !== tempReplyId), newReply] }
-          : p
-      )
-    );
 
     try {
       const res = await fetch(`/api/guestbook/posts/${postId}/comments`, {
@@ -345,34 +250,20 @@ export const GuestbookSection: React.FC = () => {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        if (data.comment) {
-          setPosts((prev) =>
-            prev.map((p) =>
-              p.id === postId
-                ? {
-                    ...p,
-                    replies: p.replies.map((r) =>
-                      r.id === tempReplyId ? { ...r, id: data.comment.id } : r
-                    ),
-                  }
-                : p
-            )
-          );
-        }
+        await fetchFromServer();
+        setReplyContent('');
+        setReplyAuthorName('');
+        setReplyPasscode('');
+        setActiveReplyPostId(null);
       } else {
         const errData = await res.json().catch(() => ({}));
-        console.warn('Reply server sync notice:', errData);
+        setReplyError(errData.error || 'Failed to submit reply to database.');
       }
     } catch (err) {
-      console.warn('Reply network notice:', err);
+      setReplyError('Network error submitting reply. Please retry.');
+    } finally {
+      setIsSubmittingReply(false);
     }
-
-    setReplyContent('');
-    setReplyAuthorName('');
-    setReplyPasscode('');
-    setActiveReplyPostId(null);
-    setIsSubmittingReply(false);
   };
 
   const filteredPosts = posts.filter((p) => {

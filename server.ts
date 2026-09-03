@@ -282,65 +282,31 @@ Type 'help' to view all commands or 'contact' to write an instant message.`,
 
 // ============================================================
 // GUESTBOOK / STATUS BOARD
-// Persisted to a local JSON file so posts + comments survive
-// server restarts. The admin password lives in GUESTBOOK_ADMIN_PASSWORD
-// with a fallback to Zainab's passcode ("7*******" or "zainab").
+// Persisted to shared storage (Upstash Redis / Vercel KV with local fallback)
+// so posts + comments survive server restarts and sync across all devices.
 // ============================================================
-import fs from "fs";
-
-interface GuestbookComment {
-  id: string;
-  author: string;
-  text: string;
-  isOwner?: boolean;
-  timestamp: string;
-}
-
-interface GuestbookPost {
-  id: string;
-  author: string;
-  text: string;
-  isAdmin: boolean;
-  mood?: string;
-  timestamp: string;
-  comments: GuestbookComment[];
-}
-
-const GUESTBOOK_FILE = path.join(process.cwd(), "guestbook-data.json");
-
-function loadGuestbook(): GuestbookPost[] {
-  try {
-    if (fs.existsSync(GUESTBOOK_FILE)) {
-      const content = fs.readFileSync(GUESTBOOK_FILE, "utf-8");
-      const parsed = JSON.parse(content);
-      if (Array.isArray(parsed)) {
-        return parsed;
-      }
-    }
-  } catch (err) {
-    console.warn("Failed to read guestbook file:", err);
-  }
-  return [];
-}
-
-function saveGuestbook(posts: GuestbookPost[]) {
-  try {
-    fs.writeFileSync(GUESTBOOK_FILE, JSON.stringify(posts, null, 2), "utf-8");
-  } catch (err) {
-    console.warn("Failed to write guestbook file:", err);
-  }
-}
+import {
+  loadGuestbook,
+  createGuestbookPost,
+  addGuestbookComment,
+  deleteGuestbookPost,
+} from "./server/storage";
 
 // GET all posts (with their comments), newest first
-app.get("/api/guestbook/posts", (_req, res) => {
-  const posts = loadGuestbook();
-  res.json({ posts: [...posts].reverse() });
+app.get("/api/guestbook/posts", async (_req, res) => {
+  try {
+    const posts = await loadGuestbook();
+    res.json({ posts: [...posts].reverse() });
+  } catch (err) {
+    console.error("Failed to load posts:", err);
+    res.status(500).json({ success: false, error: "Failed to load posts." });
+  }
 });
 
 // POST a new top-level status update or visitor comment
 // Visitors can post freely without a password.
 // Only author broadcasts require Zainab's passcode.
-app.post("/api/guestbook/posts", (req, res) => {
+app.post("/api/guestbook/posts", async (req, res) => {
   const { text, password, author, isOwnerPost, mood } = req.body;
 
   if (!text || typeof text !== "string" || !text.trim()) {
@@ -366,37 +332,32 @@ app.post("/api/guestbook/posts", (req, res) => {
     isAdmin = true;
   }
 
-  const posts = loadGuestbook();
-  const newPost: GuestbookPost = {
-    id: `post_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-    author: isAdmin 
+  try {
+    const cleanAuthor = isAdmin 
       ? ((author && String(author).trim().slice(0, 40)) || "Zainab Faisal") 
-      : ((author && String(author).trim().slice(0, 40)) || "Visitor"),
-    text: text.trim().slice(0, 1000),
-    isAdmin,
-    mood: mood ? String(mood).trim().slice(0, 60) : undefined,
-    timestamp: new Date().toISOString(),
-    comments: [],
-  };
-  posts.push(newPost);
-  saveGuestbook(posts);
+      : ((author && String(author).trim().slice(0, 40)) || "Visitor");
 
-  res.json({ success: true, post: newPost });
+    const newPost = await createGuestbookPost({
+      author: cleanAuthor,
+      text: text.trim().slice(0, 1000),
+      isAdmin,
+      mood: mood ? String(mood).trim().slice(0, 60) : undefined,
+    });
+
+    res.json({ success: true, post: newPost });
+  } catch (err) {
+    console.error("Failed to create post:", err);
+    res.status(500).json({ success: false, error: "Failed to create post." });
+  }
 });
 
 // POST a comment/reply on an existing post -- open to visitors & author replies
-app.post("/api/guestbook/posts/:postId/comments", (req, res) => {
+app.post("/api/guestbook/posts/:postId/comments", async (req, res) => {
   const { postId } = req.params;
   const { author, text, isOwnerReply, password } = req.body;
 
   if (!text || typeof text !== "string" || !text.trim()) {
     return res.status(400).json({ success: false, error: "Comment text is required." });
-  }
-
-  const posts = loadGuestbook();
-  const post = posts.find((p) => p.id === postId);
-  if (!post) {
-    return res.status(404).json({ success: false, error: "Post not found." });
   }
 
   let verifiedOwner = false;
@@ -415,21 +376,30 @@ app.post("/api/guestbook/posts/:postId/comments", (req, res) => {
     }
   }
 
-  const newComment: GuestbookComment = {
-    id: `comment_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-    author: verifiedOwner ? "Zainab (Author)" : ((author && String(author).trim().slice(0, 40)) || "Visitor"),
-    text: text.trim().slice(0, 500),
-    isOwner: verifiedOwner,
-    timestamp: new Date().toISOString(),
-  };
-  post.comments.push(newComment);
-  saveGuestbook(posts);
+  try {
+    const cleanAuthor = verifiedOwner 
+      ? "Zainab (Author)" 
+      : ((author && String(author).trim().slice(0, 40)) || "Visitor");
 
-  res.json({ success: true, comment: newComment, verifiedOwner });
+    const comment = await addGuestbookComment(postId, {
+      author: cleanAuthor,
+      text: text.trim().slice(0, 500),
+      isOwner: verifiedOwner,
+    });
+
+    if (!comment) {
+      return res.status(404).json({ success: false, error: "Post not found." });
+    }
+
+    res.json({ success: true, comment, verifiedOwner });
+  } catch (err) {
+    console.error("Failed to add comment:", err);
+    res.status(500).json({ success: false, error: "Failed to submit comment." });
+  }
 });
 
 // DELETE a post (optional moderation for Zainab)
-app.delete("/api/guestbook/posts/:postId", (req, res) => {
+app.delete("/api/guestbook/posts/:postId", async (req, res) => {
   const { postId } = req.params;
   const { password } = req.body || {};
 
@@ -444,10 +414,13 @@ app.delete("/api/guestbook/posts/:postId", (req, res) => {
     return res.status(401).json({ success: false, error: "Unauthorized." });
   }
 
-  let posts = loadGuestbook();
-  posts = posts.filter((p) => p.id !== postId);
-  saveGuestbook(posts);
-  res.json({ success: true });
+  try {
+    const deleted = await deleteGuestbookPost(postId);
+    res.json({ success: deleted });
+  } catch (err) {
+    console.error("Failed to delete post:", err);
+    res.status(500).json({ success: false, error: "Failed to delete post." });
+  }
 });
 
 async function startServer() {
@@ -466,9 +439,14 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Zainab's Portfolio Server running at http://0.0.0.0:${PORT}`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Zainab's Portfolio Server running at http://0.0.0.0:${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+export default app;
+export { app };
