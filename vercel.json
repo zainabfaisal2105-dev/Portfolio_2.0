@@ -3,14 +3,10 @@
   "rewrites": [
     {
       "source": "/api/guestbook/posts/:postId/comments",
-      "destination": "/api/guestbook/posts/:postId/comments"
+      "destination": "/api/guestbook/comments?postId=:postId"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]

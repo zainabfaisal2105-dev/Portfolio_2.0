@@ -1,1 +1,52 @@
-[]
+[
+  {
+    "id": "post_1788421565436_oq88n",
+    "author": "someone",
+    "text": "hey ;)",
+    "isAdmin": false,
+    "mood": "✨ chilling",
+    "timestamp": "2026-09-03T07:46:05.436Z",
+    "comments": [
+      {
+        "id": "comment_1788421587189_t7kjf",
+        "author": "Zainab (Author)",
+        "text": "Hi! ;)",
+        "isOwner": true,
+        "timestamp": "2026-09-03T07:46:27.189Z"
+      }
+    ]
+  },
+  {
+    "id": "post_1788421614936_it8yx",
+    "author": "Zainab Faisal",
+    "text": "I h8 ma lyf",
+    "isAdmin": true,
+    "mood": "⚡ Dead 2.0",
+    "timestamp": "2026-09-03T07:46:54.936Z",
+    "comments": []
+  },
+  {
+    "id": "post_1788424128059_fl4ey",
+    "author": "Zainab Faisal",
+    "text": "test",
+    "isAdmin": true,
+    "timestamp": "2026-09-03T08:28:48.059Z",
+    "comments": []
+  },
+  {
+    "id": "post_1788424156272_f64sm",
+    "author": "Visitor",
+    "text": "Visitor test",
+    "isAdmin": false,
+    "timestamp": "2026-09-03T08:29:16.272Z",
+    "comments": []
+  },
+  {
+    "id": "post_1788424255180_mx1pw",
+    "author": "Zainab Faisal",
+    "text": "Hello from Zainab",
+    "isAdmin": true,
+    "timestamp": "2026-09-03T08:30:55.180Z",
+    "comments": []
+  }
+]
