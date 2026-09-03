@@ -139,7 +139,7 @@ export const MySkillsWindow: React.FC<MySkillsWindowProps> = ({ isOpen, onClose,
               }`}
             >
               <span className={`block text-[10px] font-bold uppercase tracking-widest px-2 pb-1 ${
-                isY2k ? 'text-black/50' : isMyspace ? 'text-[#b8bfc9]/60' : 'text-zinc-500'
+                isY2k ? 'text-zinc-800 font-extrabold' : isMyspace ? 'text-[#b8bfc9]/60' : 'text-zinc-500'
               }`}>Folders</span>
               {FOLDERS.map((folder, idx) => {
                 const isActive = idx === activeFolderIdx;
@@ -155,7 +155,7 @@ export const MySkillsWindow: React.FC<MySkillsWindowProps> = ({ isOpen, onClose,
                           ? 'bg-[#b8bfc9]/20 text-[#b8bfc9] border border-[#b8bfc9]/50'
                           : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                         : isY2k
-                        ? 'hover:bg-black/5 text-black/80'
+                        ? 'hover:bg-black/10 text-black font-bold'
                         : isMyspace
                         ? 'hover:bg-white/5 text-[#eef1f7]/70'
                         : 'hover:bg-white/5 text-zinc-300'
@@ -171,7 +171,7 @@ export const MySkillsWindow: React.FC<MySkillsWindowProps> = ({ isOpen, onClose,
             {/* Detail pane */}
             <div className="flex-1 p-4 overflow-y-auto space-y-3">
               <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-1 ${
-                isY2k ? 'text-purple-700' : isMyspace ? 'text-[#b8bfc9]' : 'text-purple-300'
+                isY2k ? 'text-purple-900 font-extrabold' : isMyspace ? 'text-[#b8bfc9]' : 'text-purple-300'
               }`}>
                 <Cpu className="w-4 h-4" /> {activeFolder.name}
               </div>
@@ -203,7 +203,7 @@ export const MySkillsWindow: React.FC<MySkillsWindowProps> = ({ isOpen, onClose,
                     </span>
                   </div>
                   <p className={`text-[11px] sm:text-xs leading-relaxed ${
-                    isY2k ? 'text-black/70' : isMyspace ? 'text-[#eef1f7]/75' : 'text-zinc-400'
+                    isY2k ? 'text-zinc-800 font-medium' : isMyspace ? 'text-[#eef1f7]/75' : 'text-zinc-400'
                   }`}>
                     {file.desc}
                   </p>

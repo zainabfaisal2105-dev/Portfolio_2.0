@@ -17,7 +17,7 @@ import { HackingTerminalModal } from './components/HackingTerminalModal';
 import { ThemeMode } from './types';
 
 export default function App() {
-  const [activeTheme, setActiveTheme] = useState<ThemeMode>('myspace');
+  const [activeTheme, setActiveTheme] = useState<ThemeMode>('neural');
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
 
   // Background Theme Styling Classes

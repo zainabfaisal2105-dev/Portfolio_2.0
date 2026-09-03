@@ -67,26 +67,35 @@ export const TechJourney: React.FC<TechJourneyProps> = ({ activeTheme }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="space-y-2 mb-16">
-          <div className="flex items-center gap-2 text-xs text-purple-400 font-bold uppercase tracking-widest">
+          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${activeTheme === 'y2k' ? 'text-purple-800' : 'text-purple-400'}`}>
             <Compass className="w-4 h-4" />
             <span>EVOLUTIONARY TRAJECTORY</span>
           </div>
           <h2
             className={`text-3xl sm:text-5xl font-extrabold tracking-tight ${
               activeTheme === 'y2k'
-                ? 'text-black drop-shadow-[2px_2px_0px_#8b5cf6]'
+                ? 'drop-shadow-[2px_2px_0px_#8b5cf6]'
                 : activeTheme === 'myspace'
                 ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000] myspace-glow-text'
                 : 'text-white'
             }`}
           >
-            Tech Journey Timeline
+            {activeTheme === 'myspace' ? (
+              'how i got here lol'
+            ) : activeTheme === 'y2k' ? (
+              <>
+                <span className="text-purple-900">Tech Journey</span>{' '}
+                <span className="text-pink-600">Timeline</span>
+              </>
+            ) : (
+              'Tech Journey Timeline'
+            )}
           </h2>
         </div>
 
         {/* Timeline Container */}
         <div className={`relative border-l-2 ml-4 sm:ml-8 space-y-12 ${
-          activeTheme === 'myspace' ? 'border-[#9aa4b8]/60' : 'border-cyan-500/30'
+          activeTheme === 'myspace' ? 'border-[#9aa4b8]/60' : activeTheme === 'y2k' ? 'border-black' : 'border-cyan-500/30'
         }`}>
           {journey.map((item, idx) => (
             <motion.div
@@ -134,25 +143,61 @@ export const TechJourney: React.FC<TechJourneyProps> = ({ activeTheme }) => {
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
                     activeTheme === 'myspace'
                       ? 'bg-[#8ea2c9]/15 text-[#8ea2c9] border-[#8ea2c9]/40'
+                      : activeTheme === 'y2k'
+                      ? idx === 2
+                        ? 'bg-pink-100 text-pink-900 border-pink-400 font-extrabold'
+                        : 'bg-cyan-100 text-cyan-900 border-cyan-400 font-extrabold'
                       : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
                   }`}>
                     {item.year}
                   </span>
                   <span className={`text-xs font-semibold ${
-                    activeTheme === 'myspace' ? 'text-[#9aa4b8]' : 'text-purple-400'
+                    activeTheme === 'myspace'
+                      ? 'text-[#9aa4b8]'
+                      : activeTheme === 'y2k'
+                      ? idx === 0
+                        ? 'text-purple-800 font-extrabold'
+                        : idx === 1
+                        ? 'text-blue-800 font-extrabold'
+                        : idx === 2
+                        ? 'text-pink-600 font-extrabold'
+                        : 'text-emerald-700 font-extrabold'
+                      : 'text-purple-400'
                   }`}>{item.subtitle}</span>
                 </div>
 
                 <h3 className={`text-lg sm:text-xl font-bold font-mono mb-3 ${
-                  activeTheme === 'myspace' ? 'text-[#eef1f7]' : 'text-white'
+                  activeTheme === 'myspace'
+                    ? 'text-[#eef1f7]'
+                    : activeTheme === 'y2k'
+                    ? idx === 0
+                      ? 'text-purple-950 font-extrabold'
+                      : idx === 1
+                      ? 'text-blue-950 font-extrabold'
+                      : idx === 2
+                      ? 'text-pink-950 font-extrabold'
+                      : 'text-emerald-950 font-extrabold'
+                    : 'text-white'
                 }`}>{item.title}</h3>
 
                 <ul className={`space-y-2 text-xs sm:text-sm font-sans ${
-                  activeTheme === 'myspace' ? 'text-[#c7ccd6]/90' : 'text-zinc-300'
+                  activeTheme === 'myspace' ? 'text-[#c7ccd6]/90' : activeTheme === 'y2k' ? 'text-zinc-800' : 'text-zinc-300'
                 }`}>
                   {item.items.map((bullet, bIdx) => (
                     <li key={bIdx} className="flex items-start gap-2">
-                      <span className={activeTheme === 'myspace' ? 'text-[#8ea2c9] select-none' : 'text-cyan-400 select-none'}>›</span>
+                      <span className={
+                        activeTheme === 'myspace'
+                          ? 'text-[#8ea2c9] select-none'
+                          : activeTheme === 'y2k'
+                          ? idx === 0
+                            ? 'text-purple-700 font-extrabold select-none'
+                            : idx === 1
+                            ? 'text-blue-700 font-extrabold select-none'
+                            : idx === 2
+                            ? 'text-pink-600 font-extrabold select-none'
+                            : 'text-emerald-700 font-extrabold select-none'
+                          : 'text-cyan-400 select-none'
+                      }>›</span>
                       <span>{bullet}</span>
                     </li>
                   ))}

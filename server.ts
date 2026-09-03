@@ -283,10 +283,8 @@ Type 'help' to view all commands or 'contact' to write an instant message.`,
 // ============================================================
 // GUESTBOOK / STATUS BOARD
 // Persisted to a local JSON file so posts + comments survive
-// server restarts. The admin password lives ONLY in the
-// GUESTBOOK_ADMIN_PASSWORD environment variable (set it in your
-// own .env file) -- it is never sent to the browser or bundled
-// into any frontend code.
+// server restarts. The admin password lives in GUESTBOOK_ADMIN_PASSWORD
+// with a fallback to Zainab's passcode ("7*******" or "zainab").
 // ============================================================
 import fs from "fs";
 
@@ -294,6 +292,7 @@ interface GuestbookComment {
   id: string;
   author: string;
   text: string;
+  isOwner?: boolean;
   timestamp: string;
 }
 
@@ -302,6 +301,7 @@ interface GuestbookPost {
   author: string;
   text: string;
   isAdmin: boolean;
+  mood?: string;
   timestamp: string;
   comments: GuestbookComment[];
 }
@@ -311,7 +311,11 @@ const GUESTBOOK_FILE = path.join(process.cwd(), "guestbook-data.json");
 function loadGuestbook(): GuestbookPost[] {
   try {
     if (fs.existsSync(GUESTBOOK_FILE)) {
-      return JSON.parse(fs.readFileSync(GUESTBOOK_FILE, "utf-8"));
+      const content = fs.readFileSync(GUESTBOOK_FILE, "utf-8");
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
     }
   } catch (err) {
     console.warn("Failed to read guestbook file:", err);
@@ -333,36 +337,44 @@ app.get("/api/guestbook/posts", (_req, res) => {
   res.json({ posts: [...posts].reverse() });
 });
 
-// POST a new top-level status update -- ADMIN / ZAINAB.
-// Supports process.env.GUESTBOOK_ADMIN_PASSWORD with a friendly default "zainab" fallback
-// so the portfolio owner is never locked out.
+// POST a new top-level status update or visitor comment
+// Visitors can post freely without a password.
+// Only author broadcasts require Zainab's passcode.
 app.post("/api/guestbook/posts", (req, res) => {
-  const { text, password, author } = req.body;
+  const { text, password, author, isOwnerPost, mood } = req.body;
 
   if (!text || typeof text !== "string" || !text.trim()) {
     return res.status(400).json({ success: false, error: "Post text is required." });
   }
 
-  const validPassword = process.env.GUESTBOOK_ADMIN_PASSWORD || "7*******";
-  const providedPassword = (password || "").trim();
+  let isAdmin = false;
+  if (isOwnerPost) {
+    const validPassword = process.env.GUESTBOOK_ADMIN_PASSWORD || "7*******";
+    const providedPassword = (password || "").trim();
 
-  const isMatch = providedPassword === validPassword || 
-                  providedPassword.toLowerCase() === validPassword.toLowerCase() ||
-                  providedPassword === "7*******";
+    const isMatch = providedPassword === validPassword || 
+                    providedPassword.toLowerCase() === validPassword.toLowerCase() ||
+                    providedPassword === "7*******" ||
+                    providedPassword.toLowerCase() === "zainab";
 
-  if (!isMatch) {
-    return res.status(401).json({ 
-      success: false, 
-      error: "Incorrect passcode. Access restricted to author." 
-    });
+    if (!isMatch) {
+      return res.status(401).json({ 
+        success: false, 
+        error: "Incorrect author passcode. Access restricted to Zainab." 
+      });
+    }
+    isAdmin = true;
   }
 
   const posts = loadGuestbook();
   const newPost: GuestbookPost = {
-    id: `post_${Date.now()}`,
-    author: (author && String(author).trim().slice(0, 40)) || "zainab",
+    id: `post_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    author: isAdmin 
+      ? ((author && String(author).trim().slice(0, 40)) || "Zainab Faisal") 
+      : ((author && String(author).trim().slice(0, 40)) || "Visitor"),
     text: text.trim().slice(0, 1000),
-    isAdmin: true,
+    isAdmin,
+    mood: mood ? String(mood).trim().slice(0, 60) : undefined,
     timestamp: new Date().toISOString(),
     comments: [],
   };
@@ -372,7 +384,7 @@ app.post("/api/guestbook/posts", (req, res) => {
   res.json({ success: true, post: newPost });
 });
 
-// POST a comment on an existing post -- open to visitors & author replies
+// POST a comment/reply on an existing post -- open to visitors & author replies
 app.post("/api/guestbook/posts/:postId/comments", (req, res) => {
   const { postId } = req.params;
   const { author, text, isOwnerReply, password } = req.body;
@@ -391,21 +403,51 @@ app.post("/api/guestbook/posts/:postId/comments", (req, res) => {
   if (isOwnerReply) {
     const validPassword = process.env.GUESTBOOK_ADMIN_PASSWORD || "7*******";
     const providedPassword = (password || "").trim();
-    if (providedPassword === validPassword || providedPassword.toLowerCase() === validPassword.toLowerCase() || providedPassword === "7*******") {
+    if (
+      providedPassword === validPassword || 
+      providedPassword.toLowerCase() === validPassword.toLowerCase() || 
+      providedPassword === "7*******" ||
+      providedPassword.toLowerCase() === "zainab"
+    ) {
       verifiedOwner = true;
+    } else {
+      return res.status(401).json({ success: false, error: "Incorrect author passcode." });
     }
   }
 
   const newComment: GuestbookComment = {
-    id: `comment_${Date.now()}`,
-    author: verifiedOwner ? "Zainab (Author)" : ((author && String(author).trim().slice(0, 40)) || "visitor"),
+    id: `comment_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    author: verifiedOwner ? "Zainab (Author)" : ((author && String(author).trim().slice(0, 40)) || "Visitor"),
     text: text.trim().slice(0, 500),
+    isOwner: verifiedOwner,
     timestamp: new Date().toISOString(),
   };
   post.comments.push(newComment);
   saveGuestbook(posts);
 
   res.json({ success: true, comment: newComment, verifiedOwner });
+});
+
+// DELETE a post (optional moderation for Zainab)
+app.delete("/api/guestbook/posts/:postId", (req, res) => {
+  const { postId } = req.params;
+  const { password } = req.body || {};
+
+  const validPassword = process.env.GUESTBOOK_ADMIN_PASSWORD || "7*******";
+  const providedPassword = (password || "").trim();
+  const isMatch = providedPassword === validPassword || 
+                  providedPassword.toLowerCase() === validPassword.toLowerCase() ||
+                  providedPassword === "7*******" ||
+                  providedPassword.toLowerCase() === "zainab";
+
+  if (!isMatch) {
+    return res.status(401).json({ success: false, error: "Unauthorized." });
+  }
+
+  let posts = loadGuestbook();
+  posts = posts.filter((p) => p.id !== postId);
+  saveGuestbook(posts);
+  res.json({ success: true });
 });
 
 async function startServer() {

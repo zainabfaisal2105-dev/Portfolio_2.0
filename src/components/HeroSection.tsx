@@ -86,7 +86,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 <span>{activeTheme === 'myspace' ? 'cs kid @ UMT' : 'BS CS Student @ UMT'}</span>
                 <span className="opacity-40">•</span>
-                <span className={activeTheme === 'myspace' ? 'text-white/90 font-semibold' : 'text-purple-400 font-semibold'}>{activeTheme === 'myspace' ? 'code + chaos' : 'AI • ML • Systems'}</span>
+                <span className={activeTheme === 'myspace' ? 'text-white/90 font-semibold' : activeTheme === 'y2k' ? 'text-purple-900 font-bold' : 'text-purple-400 font-semibold'}>{activeTheme === 'myspace' ? 'code + chaos' : 'AI • ML • Systems'}</span>
               </div>
             </motion.div>
 
@@ -100,13 +100,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <h1
                 className={`text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight font-mono ${
                   activeTheme === 'y2k'
-                    ? 'text-black drop-shadow-[3px_3px_0px_#f43f5e] glitch-hover cursor-default'
+                    ? 'drop-shadow-[3px_3px_0px_#f43f5e] glitch-hover cursor-default'
                     : activeTheme === 'myspace'
                     ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000] myspace-glow-text'
                     : 'text-white'
                 }`}
               >
-                ZAINAB FAISAL
+                {activeTheme === 'y2k' ? (
+                  <>
+                    <span className="text-purple-900">ZAINAB</span>{' '}
+                    <span className="text-pink-600">FAISAL</span>
+                  </>
+                ) : (
+                  'ZAINAB FAISAL'
+                )}
               </h1>
 
               <p
@@ -118,7 +125,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     : 'text-cyan-400'
                 }`}
               >
-                "{activeTheme === 'myspace' ? 'i make computers do stuff... idk how 2 explain it lol' : 'I study how machines think, communicate, and learn.'}"
+                "{activeTheme === 'myspace' ? (
+                  'i make computers do stuff... idk how 2 explain it lol'
+                ) : activeTheme === 'y2k' ? (
+                  <>I study how <span className="text-purple-700">machines think</span>, <span className="text-cyan-700">communicate</span>, and <span className="text-emerald-700">learn</span>.</>
+                ) : (
+                  'I study how machines think, communicate, and learn.'
+                )}"
               </p>
             </motion.div>
 
@@ -137,6 +150,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             >
               {activeTheme === 'myspace' ? (
                 <>heyyy!! im zainab :P im a cs girl who spends wayyy 2 much time making stuff on the computer lol. rn im obsessed w/ AI, networks, n figuring out how systems actually work under the hood. made a whole LLM thing called <strong className="text-[#8ea2c9] font-mono">TriCore AI</strong> cuz i wanted 2 see if i could... spent wayyy 2 long on it but honestly i kinda love it &lt;3</>
+              ) : activeTheme === 'y2k' ? (
+                <>Exploring technology from <span className="text-purple-800 font-bold">low-level computer architecture</span> and <span className="text-blue-800 font-bold">networks</span> to <span className="text-pink-600 font-bold">intelligent AI systems</span>. Building specialized LLM architectures like <strong className="text-fuchsia-700 font-mono font-extrabold">TriCore AI</strong> and exploring <span className="text-emerald-800 font-bold">security concepts</span> from first principles.</>
               ) : (
                 <>Exploring technology from low-level computer architecture and networks to intelligent AI systems.
               Building specialized LLM architectures like <strong className="text-cyan-400 font-mono">TriCore AI</strong> and exploring security concepts from first principles.</>
@@ -184,20 +199,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
               className={`grid grid-cols-3 gap-4 pt-4 border-t max-w-xl text-xs font-mono ${
-                activeTheme === 'myspace' ? 'border-[#eef1f7]/20' : 'border-white/10'
+                activeTheme === 'myspace' ? 'border-[#eef1f7]/20' : activeTheme === 'y2k' ? 'border-black/20' : 'border-white/10'
               }`}
             >
               <div>
-                <span className={`block text-[10px] font-bold ${activeTheme === 'myspace' ? 'text-[#c7ccd6]/80' : 'text-zinc-500'}`}>{activeTheme === 'myspace' ? 'skool' : 'DEGREE'}</span>
-                <span className={`font-bold text-xs sm:text-sm ${activeTheme === 'myspace' ? 'text-[#8ea2c9]' : 'text-cyan-400'}`}>BS CS @ UMT</span>
+                <span className={`block text-[10px] font-bold ${activeTheme === 'myspace' ? 'text-[#c7ccd6]/80' : activeTheme === 'y2k' ? 'text-cyan-800' : 'text-zinc-500'}`}>{activeTheme === 'myspace' ? 'skool' : 'DEGREE'}</span>
+                <span className={`font-bold text-xs sm:text-sm ${activeTheme === 'myspace' ? 'text-[#8ea2c9]' : activeTheme === 'y2k' ? 'text-blue-900 font-extrabold' : 'text-cyan-400'}`}>BS CS @ UMT</span>
               </div>
               <div>
-                <span className={`block text-[10px] font-bold ${activeTheme === 'myspace' ? 'text-[#c7ccd6]/80' : 'text-zinc-500'}`}>{activeTheme === 'myspace' ? 'obsessed w/' : 'FOCUS'}</span>
-                <span className={`font-bold text-xs sm:text-sm ${activeTheme === 'myspace' ? 'text-[#8ea2c9]' : 'text-purple-400'}`}>AI & LLM Architecture</span>
+                <span className={`block text-[10px] font-bold ${activeTheme === 'myspace' ? 'text-[#c7ccd6]/80' : activeTheme === 'y2k' ? 'text-purple-800' : 'text-zinc-500'}`}>{activeTheme === 'myspace' ? 'obsessed w/' : 'FOCUS'}</span>
+                <span className={`font-bold text-xs sm:text-sm ${activeTheme === 'myspace' ? 'text-[#8ea2c9]' : activeTheme === 'y2k' ? 'text-purple-900 font-extrabold' : 'text-purple-400'}`}>AI & LLM Architecture</span>
               </div>
               <div>
-                <span className={`block text-[10px] font-bold ${activeTheme === 'myspace' ? 'text-[#c7ccd6]/80' : 'text-zinc-500'}`}>{activeTheme === 'myspace' ? 'rn' : 'SYSTEM'}</span>
-                <span className={`font-bold text-xs sm:text-sm ${activeTheme === 'myspace' ? 'text-[#8ea2c9]' : 'text-emerald-400'}`}>{activeTheme === 'myspace' ? 'zainab.OS is online lol' : 'Zainab.OS Online'}</span>
+                <span className={`block text-[10px] font-bold ${activeTheme === 'myspace' ? 'text-[#c7ccd6]/80' : activeTheme === 'y2k' ? 'text-emerald-800' : 'text-zinc-500'}`}>{activeTheme === 'myspace' ? 'rn' : 'SYSTEM'}</span>
+                <span className={`font-bold text-xs sm:text-sm ${activeTheme === 'myspace' ? 'text-[#8ea2c9]' : activeTheme === 'y2k' ? 'text-emerald-900 font-extrabold' : 'text-emerald-400'}`}>{activeTheme === 'myspace' ? 'zainab.OS is online lol' : 'Zainab.OS Online'}</span>
               </div>
             </motion.div>
           </div>
@@ -214,11 +229,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 {/* Header Window Bar */}
                 <div className="bg-pink-500 text-white border-2 border-black p-2 mb-3 flex items-center justify-between font-bold text-xs shadow-[2px_2px_0px_0px_#000]">
                   <div className="flex items-center gap-1">
-                    <span>ZAINAB.SYS</span>
+                    <span className="text-white">ZAINAB.SYS</span>
                   </div>
                   <div className="bg-pink-300 text-black px-2 py-0.5 border border-black text-[10px] flex items-center gap-1 font-bold">
-                    <span className="sparkle-spin inline-block">✦</span>
-                    LOOKING FOR ATTENTION !!!
+                    <span className="sparkle-spin inline-block text-pink-600">✦</span>
+                    <span className="text-pink-700 font-extrabold">LOOKING FOR ATTENTION !!!</span>
                   </div>
                   <div className="flex gap-1 text-black font-extrabold">
                     <span>_</span>
@@ -239,25 +254,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       alt="Zainab Faisal"
                       className="w-full h-64 object-cover object-top"
                     />
-                    <div className="p-3 bg-pink-100 border-t-2 border-black text-center font-bold text-xs text-black">
-                      ZAINAB FAISAL ♥ BS CS STUDENT @ UMT
+                    <div className="p-3 bg-pink-100 border-t-2 border-black text-center font-bold text-xs">
+                      <span className="text-purple-900 font-extrabold">ZAINAB FAISAL</span> <span className="text-pink-600">♥</span> <span className="text-blue-900 font-extrabold">BS CS STUDENT @ UMT</span>
                     </div>
                   </div>
 
                   {/* Retro Badges & Stats */}
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-bold">
                     <div className="bg-purple-200 border-2 border-black p-1.5 rounded">
-                      <span className="block text-[9px] text-zinc-600">MBTI</span>
-                      <span>INTJ-A / CYBER</span>
+                      <span className="block text-[9px] text-purple-900 font-bold">MBTI</span>
+                      <span className="text-purple-950 font-extrabold">INTJ-A / CYBER</span>
                     </div>
                     <div className="bg-cyan-200 border-2 border-black p-1.5 rounded">
-                      <span className="block text-[9px] text-zinc-600">CONSTELLATION</span>
-                      <span>TAURUS / AI</span>
+                      <span className="block text-[9px] text-cyan-900 font-bold">CONSTELLATION</span>
+                      <span className="text-cyan-950 font-extrabold">TAURUS / AI</span>
                     </div>
                   </div>
 
                   <div className="bg-cyan-100 border-2 border-black p-2 text-center text-[10px] text-black font-bold">
-                    ★ Status: Running on Caffeine + Clean Commits ★
+                    <span className="text-pink-600">★</span> Status: Running on <span className="text-amber-700 font-extrabold">Caffeine</span> + <span className="text-emerald-700 font-extrabold">Clean Commits</span> <span className="text-pink-600">★</span>
                   </div>
                 </div>
               </motion.div>

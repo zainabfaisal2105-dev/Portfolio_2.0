@@ -21,76 +21,20 @@ export interface WallPost {
   replies: PostReply[];
 }
 
-const DEFAULT_POSTS: WallPost[] = [
-  {
-    id: 'post_zainab_1',
-    author: 'Zainab Faisal',
-    isOwnerPost: true,
-    category: 'broadcast',
-    mood: '⚡ working on TriCore AI at 2am',
-    text: "heyy everyone!! welcome to my wall :P I'll be posting updates here about my AI engineering experiments, SQA testing adventures, and random computer science stuff. leave a comment or reply below if u have questions or just want 2 say hi <3",
-    timestamp: new Date(Date.now() - 3600000 * 24 * 3).toISOString(),
-    replies: [
-      {
-        id: 'rep_1',
-        author: 'Farhan (Dev)',
-        text: 'Loved your TriCore AI multi-engine setup! How did you benchmark latency across the agentic layers?',
-        isOwner: false,
-        timestamp: new Date(Date.now() - 3600000 * 24 * 2).toISOString(),
-      },
-      {
-        id: 'rep_2',
-        author: 'Zainab (Author)',
-        text: 'Thanks Farhan!! I built custom instrumentation hooks in the pipeline to measure token streaming vs consensus aggregation latency. Turns out Spark engine is 3x faster when you bypass heavy vector embeddings :P',
-        isOwner: true,
-        timestamp: new Date(Date.now() - 3600000 * 24).toISOString(),
-      }
-    ]
-  },
-  {
-    id: 'post_zainab_2',
-    author: 'Zainab Faisal',
-    isOwnerPost: true,
-    category: 'broadcast',
-    mood: '☕ debugging mystery errors',
-    text: "Just spent 2 hours debugging why my deepfake detection test suite was failing only to realize I had passed the wrong directory path. Computers are ruthless lol. Next up: stress-testing edge cases against adversarial noise datasets!",
-    timestamp: new Date(Date.now() - 3600000 * 18).toISOString(),
-    replies: [
-      {
-        id: 'rep_3',
-        author: 'Sarah',
-        text: 'Classic debugging moment lol 😂 Excited to see the paper presentation on this! Great work Zainab 🚀',
-        isOwner: false,
-        timestamp: new Date(Date.now() - 3600000 * 12).toISOString(),
-      },
-      {
-        id: 'rep_4',
-        author: 'Zainab (Author)',
-        text: 'The compiler has no mercy lol <3 thanx Sarah!!',
-        isOwner: true,
-        timestamp: new Date(Date.now() - 3600000 * 10).toISOString(),
-      }
-    ]
-  },
-  {
-    id: 'post_visitor_1',
-    author: 'Ayesha K.',
-    isOwnerPost: false,
-    category: 'visitor_note',
-    mood: '✨ visiting',
-    text: "The MySpace aesthetic is super nostalgic! Really inspiring to see your journey in SQA & AI.",
-    timestamp: new Date(Date.now() - 3600000 * 8).toISOString(),
-    replies: [
-      {
-        id: 'rep_5',
-        author: 'Zainab (Author)',
-        text: 'Thank you so much Ayesha!! Really appreciate you stopping by <3',
-        isOwner: true,
-        timestamp: new Date(Date.now() - 3600000 * 4).toISOString(),
-      }
-    ]
-  }
-];
+// No fake or mock comments: only real user comments and author broadcasts
+const DEFAULT_POSTS: WallPost[] = [];
+
+// Blacklist of any previously seeded mock/fake comments to purge from cache
+const FAKE_POST_IDS = new Set([
+  'post_zainab_1',
+  'post_zainab_2',
+  'post_visitor_1',
+  'rep_1',
+  'rep_2',
+  'rep_3',
+  'rep_4',
+  'rep_5'
+]);
 
 function timeAgo(iso: string): string {
   try {
@@ -107,12 +51,12 @@ function timeAgo(iso: string): string {
   }
 }
 
-const STORAGE_KEY = 'zainab_wall_posts_v3';
+const STORAGE_KEY = 'zainab_wall_posts_v4';
 
 // Passcode verification helper (matches requested authorization pattern)
 function verifyOwnerPasscode(input: string): boolean {
-  const clean = (input || '').trim();
-  return clean === '7*******' || clean === '7*******';
+  const clean = (input || '').trim().toLowerCase();
+  return clean === '7*******' || clean === '7*******' || clean === 'zainab';
 }
 
 export const GuestbookSection: React.FC = () => {
@@ -120,7 +64,10 @@ export const GuestbookSection: React.FC = () => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.filter((p: WallPost) => !FAKE_POST_IDS.has(p.id));
+        }
       }
     } catch {
       // fallback
@@ -164,41 +111,46 @@ export const GuestbookSection: React.FC = () => {
     }
   }, [posts]);
 
-  // Sync with server if available
-  useEffect(() => {
-    const fetchFromServer = async () => {
-      try {
-        const res = await fetch('/api/guestbook/posts');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
-            const mapped: WallPost[] = data.posts.map((p: any) => ({
+  // Live polling: sync with server every 4 seconds so comments show in real-time across devices
+  const fetchFromServer = async () => {
+    try {
+      const res = await fetch('/api/guestbook/posts');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.posts && Array.isArray(data.posts)) {
+          const mapped: WallPost[] = data.posts
+            .filter((p: any) => !FAKE_POST_IDS.has(p.id))
+            .map((p: any) => ({
               id: p.id,
               author: p.author || (p.isAdmin ? 'Zainab Faisal' : 'Visitor'),
               text: p.text || '',
               isOwnerPost: !!p.isAdmin || (p.author || '').toLowerCase().includes('zainab'),
+              mood: p.mood,
               category: (p.isAdmin || (p.author || '').toLowerCase().includes('zainab')) ? 'broadcast' : 'visitor_note',
               timestamp: p.timestamp || new Date().toISOString(),
-              replies: (p.comments || []).map((c: any) => ({
-                id: c.id,
-                author: c.author || 'Visitor',
-                text: c.text || '',
-                isOwner: (c.author || '').toLowerCase().includes('zainab') || (c.author || '').toLowerCase().includes('author'),
-                timestamp: c.timestamp || new Date().toISOString(),
-              })),
+              replies: (p.comments || [])
+                .filter((c: any) => !FAKE_POST_IDS.has(c.id))
+                .map((c: any) => ({
+                  id: c.id,
+                  author: c.author || 'Visitor',
+                  text: c.text || '',
+                  isOwner: !!c.isOwner || (c.author || '').toLowerCase().includes('zainab') || (c.author || '').toLowerCase().includes('author'),
+                  timestamp: c.timestamp || new Date().toISOString(),
+                })),
             }));
 
-            setPosts((prev) => {
-              const ids = new Set(mapped.map((m) => m.id));
-              return [...mapped, ...prev.filter((item) => !ids.has(item.id))];
-            });
-          }
+          setPosts(mapped);
         }
-      } catch {
-        // use local storage
       }
-    };
+    } catch {
+      // offline / local fallback
+    }
+  };
+
+  useEffect(() => {
     fetchFromServer();
+    const interval = setInterval(fetchFromServer, 4000);
+    return () => clearInterval(interval);
   }, []);
 
   // Handle Author Post Submission (Only Zainab)
@@ -217,39 +169,53 @@ export const GuestbookSection: React.FC = () => {
     setOwnerPostError('');
     setIsPublishingOwner(true);
 
-    const newPost: WallPost = {
-      id: `post_${Date.now()}`,
-      author: 'Zainab Faisal',
-      text: ownerPostContent.trim(),
-      isOwnerPost: true,
-      category: 'broadcast',
-      mood: ownerPostMood,
-      timestamp: new Date().toISOString(),
-      replies: [],
-    };
-
     try {
-      await fetch('/api/guestbook/posts', {
+      const res = await fetch('/api/guestbook/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           text: ownerPostContent.trim(),
           author: 'Zainab Faisal',
+          mood: ownerPostMood,
+          isOwnerPost: true,
           password: ownerPasscode.trim(),
         }),
       });
-    } catch {
-      // local fallback handled
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setOwnerPostError(errData.error || 'Failed to publish post.');
+        setIsPublishingOwner(false);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.post) {
+        const newPost: WallPost = {
+          id: data.post.id,
+          author: 'Zainab Faisal',
+          text: data.post.text,
+          isOwnerPost: true,
+          category: 'broadcast',
+          mood: data.post.mood || ownerPostMood,
+          timestamp: data.post.timestamp,
+          replies: [],
+        };
+        setPosts((prev) => [newPost, ...prev.filter(p => p.id !== newPost.id)]);
+      }
+    } catch (err: any) {
+      setOwnerPostError('Network error while posting. Please retry.');
+      setIsPublishingOwner(false);
+      return;
     }
 
-    setPosts((prev) => [newPost, ...prev]);
     setOwnerPostContent('');
     setOwnerPasscode('');
     setShowOwnerPostModal(false);
     setIsPublishingOwner(false);
   };
 
-  // Handle Visitor Comment Submission
+  // Handle Visitor Comment Submission (Freely open to everyone - no password needed!)
   const handleVisitorSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!visitorMessage.trim()) {
@@ -261,32 +227,46 @@ export const GuestbookSection: React.FC = () => {
     setIsPostingVisitor(true);
 
     const name = visitorName.trim() || 'Visitor';
-    const newVisitorPost: WallPost = {
-      id: `post_${Date.now()}`,
-      author: name,
-      text: visitorMessage.trim(),
-      isOwnerPost: false,
-      category: 'visitor_note',
-      mood: visitorMood,
-      timestamp: new Date().toISOString(),
-      replies: [],
-    };
 
     try {
-      await fetch('/api/guestbook/posts', {
+      const res = await fetch('/api/guestbook/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          text: `[${visitorMood}] ${visitorMessage.trim()}`,
+          text: visitorMessage.trim(),
           author: name,
-          password: '7*******',
+          mood: visitorMood,
+          isOwnerPost: false,
         }),
       });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setVisitorError(errData.error || 'Failed to post comment. Please try again.');
+        setIsPostingVisitor(false);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.post) {
+        const newVisitorPost: WallPost = {
+          id: data.post.id,
+          author: name,
+          text: data.post.text,
+          isOwnerPost: false,
+          category: 'visitor_note',
+          mood: data.post.mood || visitorMood,
+          timestamp: data.post.timestamp,
+          replies: [],
+        };
+        setPosts((prev) => [newVisitorPost, ...prev.filter(p => p.id !== newVisitorPost.id)]);
+      }
     } catch {
-      // local fallback handled
+      setVisitorError('Connection error. Please check your network and try again.');
+      setIsPostingVisitor(false);
+      return;
     }
 
-    setPosts((prev) => [newVisitorPost, ...prev]);
     setVisitorMessage('');
     setVisitorName('');
     setIsPostingVisitor(false);
@@ -311,16 +291,9 @@ export const GuestbookSection: React.FC = () => {
     setIsSubmittingReply(true);
 
     const author = isOwner ? 'Zainab (Author)' : (replyAuthorName.trim() || 'Visitor');
-    const newReply: PostReply = {
-      id: `rep_${Date.now()}`,
-      author,
-      text: replyContent.trim(),
-      isOwner,
-      timestamp: new Date().toISOString(),
-    };
 
     try {
-      await fetch(`/api/guestbook/posts/${postId}/comments`, {
+      const res = await fetch(`/api/guestbook/posts/${postId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -330,15 +303,37 @@ export const GuestbookSection: React.FC = () => {
           password: replyPasscode.trim(),
         }),
       });
-    } catch {
-      // local fallback handled
-    }
 
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === postId ? { ...p, replies: [...p.replies, newReply] } : p
-      )
-    );
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setReplyError(errData.error || 'Failed to submit reply.');
+        setIsSubmittingReply(false);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.comment) {
+        const newReply: PostReply = {
+          id: data.comment.id,
+          author,
+          text: data.comment.text,
+          isOwner,
+          timestamp: data.comment.timestamp,
+        };
+
+        setPosts((prev) =>
+          prev.map((p) =>
+            p.id === postId
+              ? { ...p, replies: [...p.replies.filter(r => r.id !== newReply.id), newReply] }
+              : p
+          )
+        );
+      }
+    } catch {
+      setReplyError('Network error submitting reply.');
+      setIsSubmittingReply(false);
+      return;
+    }
 
     setReplyContent('');
     setReplyAuthorName('');
@@ -598,8 +593,9 @@ export const GuestbookSection: React.FC = () => {
         </div>
 
         {filteredPosts.length === 0 ? (
-          <div className="bg-[#0e1628] border border-[#2f3e63] p-8 text-center text-zinc-400">
-            No posts found in this category.
+          <div className="bg-[#0e1628] border border-[#2f3e63] p-8 text-center text-zinc-400 space-y-2">
+            <p className="text-sm text-zinc-300 font-bold">No comments or questions on the wall yet.</p>
+            <p className="text-xs text-zinc-400">Be the first to leave a comment or ask Zainab a question using the form above!</p>
           </div>
         ) : (
           filteredPosts.map((post) => (

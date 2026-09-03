@@ -139,14 +139,27 @@ Quick commands: [whoami] [skills] [projects] [cat resume.txt] [matrix] [email]`,
     }
 
     if (lowerCmd.startsWith('theme')) {
-      const mode = lowerCmd.split(' ')[1] as ThemeMode;
-      if (mode === 'neural' || mode === 'myspace' || mode === 'y2k') {
+      const target = lowerCmd.split(' ')[1];
+      let mode: ThemeMode | null = null;
+      let label = '';
+      if (target === 'dark' || target === 'neural') {
+        mode = 'neural';
+        label = 'DARK';
+      } else if (target === 'pastelspace' || target === 'y2k') {
+        mode = 'y2k';
+        label = 'PASTELSPACE';
+      } else if (target === 'myspace') {
+        mode = 'myspace';
+        label = 'MYSPACE';
+      }
+
+      if (mode && label) {
         onThemeChange(mode);
         setHistory((prev) => [
           ...prev,
           {
             command: rawCmd,
-            output: `[SYSTEM]: Portfolio theme switched to '${mode.toUpperCase()}'.`,
+            output: `[SYSTEM]: Portfolio theme switched to '${label}'.`,
             timestamp: timeStr,
           },
         ]);
@@ -155,7 +168,7 @@ Quick commands: [whoami] [skills] [projects] [cat resume.txt] [matrix] [email]`,
           ...prev,
           {
             command: rawCmd,
-            output: `[USAGE]: theme <neural | myspace | y2k>`,
+            output: `[USAGE]: theme <dark | pastelspace | myspace>`,
             timestamp: timeStr,
           },
         ]);
@@ -198,7 +211,7 @@ Available Commands:
   matrix      - Trigger digital rain visual mode
   tricore     - Inspect TriCore AI engine architecture
   clear       - Clear terminal buffer
-  theme       - Switch portfolio theme [neural | myspace | y2k]
+  theme       - Switch portfolio theme [dark | pastelspace | myspace]
   sudo        - Request root privileges
   cat resume.txt / cat about.txt - Read files
 ======================================================`,

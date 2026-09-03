@@ -147,22 +147,31 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeTheme })
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="space-y-2 mb-12">
-          <div className="flex items-center gap-2 text-xs text-cyan-400 font-bold uppercase tracking-widest">
+          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${activeTheme === 'y2k' ? 'text-cyan-800' : 'text-cyan-400'}`}>
             <Code2 className="w-4 h-4" />
             <span>{activeTheme === 'myspace' ? 'things i made' : 'DEEP CASE STUDIES'}</span>
           </div>
           <h2
             className={`text-3xl sm:text-5xl font-extrabold tracking-tight ${
               activeTheme === 'y2k'
-                ? 'text-black drop-shadow-[2px_2px_0px_#3b82f6]'
+                ? 'drop-shadow-[2px_2px_0px_#3b82f6]'
                 : activeTheme === 'myspace'
                 ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000] myspace-glow-text'
                 : 'text-white'
             }`}
           >
-            {activeTheme === 'myspace' ? 'stuff i actually built' : 'Engineering Projects'}
+            {activeTheme === 'myspace' ? (
+              'stuff i actually built'
+            ) : activeTheme === 'y2k' ? (
+              <>
+                <span className="text-purple-900">Engineering</span>{' '}
+                <span className="text-pink-600">Projects</span>
+              </>
+            ) : (
+              'Engineering Projects'
+            )}
           </h2>
-          <p className="text-sm text-zinc-400 max-w-2xl">
+          <p className={`text-sm max-w-2xl ${activeTheme === 'y2k' ? 'text-zinc-700' : 'text-zinc-400'}`}>
             {activeTheme === 'myspace' ? 'made these cuz i wanted 2 see if i could lol. click around ig' : 'Detailed case studies focusing on problem formulation, architectural design, and lessons learned.'}
           </p>
         </div>
@@ -211,19 +220,21 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeTheme })
           >
             {/* Top Bar Info */}
             <div className={`flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b ${
-              'border-white/10'
+              activeTheme === 'y2k' ? 'border-black/20' : 'border-white/10'
             }`}>
               <div>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                  'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                  activeTheme === 'y2k'
+                    ? 'bg-cyan-200 text-purple-900 border-cyan-500 font-extrabold'
+                    : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
                 }`}>
                   {activeProject.category}
                 </span>
                 <h3 className={`text-2xl sm:text-4xl font-extrabold font-mono mt-2 ${
-                  'text-white'
+                  activeTheme === 'y2k' ? 'text-purple-950 font-extrabold' : 'text-white'
                 }`}>{activeProject.title}</h3>
-                <p className={`text-sm font-mono mt-1 font-semibold ${
-                  'text-cyan-400'
+                <p className={`text-sm font-mono mt-1 ${
+                  activeTheme === 'y2k' ? 'text-pink-700 font-bold' : 'text-cyan-400'
                 }`}>"{activeProject.subtitle}"</p>
               </div>
 
@@ -234,11 +245,13 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeTheme })
                     <div
                       key={s.label}
                       className={`px-4 py-2 rounded-xl border text-center ${
-                        'bg-black/30 border-cyan-500/30 text-cyan-300'
+                        activeTheme === 'y2k'
+                          ? 'bg-white border-2 border-black text-black shadow-[2px_2px_0px_0px_#000]'
+                          : 'bg-black/30 border-cyan-500/30 text-cyan-300'
                       }`}
                     >
-                      <span className={`block text-[10px] uppercase ${'text-zinc-400'}`}>{s.label}</span>
-                      <span className={`text-lg font-bold ${'text-cyan-300'}`}>{s.value}</span>
+                      <span className={`block text-[10px] uppercase ${activeTheme === 'y2k' ? 'text-zinc-700 font-bold' : 'text-zinc-400'}`}>{s.label}</span>
+                      <span className={`text-lg font-bold ${activeTheme === 'y2k' ? 'text-purple-900 font-extrabold' : 'text-cyan-300'}`}>{s.value}</span>
                     </div>
                   ))}
                 </div>
@@ -248,10 +261,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeTheme })
             {/* TriCore AI Architecture Showcase Box if TriCore selected */}
             {activeProject.architecture && (
               <div className={`mb-8 p-6 rounded-xl border space-y-4 ${
-                'bg-black/40 border-cyan-500/30'
+                activeTheme === 'y2k' ? 'bg-white border-2 border-black' : 'bg-black/40 border-cyan-500/30'
               }`}>
                 <div className={`flex items-center gap-2 font-bold text-xs uppercase ${
-                  'text-cyan-400'
+                  activeTheme === 'y2k' ? 'text-purple-900 font-extrabold' : 'text-cyan-400'
                 }`}>
                   <Cpu className="w-4 h-4" />
                   <span>TRICORE MULTI-ENGINE ARCHITECTURE</span>
@@ -261,24 +274,28 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeTheme })
                     <div
                       key={eng.engine}
                       className={`p-4 rounded-lg border text-xs font-mono space-y-1 ${
-                        'bg-cyan-950/30 border-cyan-500/20 text-cyan-300'
+                        activeTheme === 'y2k'
+                          ? 'bg-cyan-50 border-2 border-black text-black'
+                          : 'bg-cyan-950/30 border-cyan-500/20 text-cyan-300'
                       }`}
                     >
                       <h4 className={`font-bold text-sm flex items-center gap-1.5 ${
-                        'text-cyan-300'
+                        activeTheme === 'y2k' ? 'text-purple-950 font-extrabold' : 'text-cyan-300'
                       }`}>
-                        <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
+                        <Sparkles className={`w-3.5 h-3.5 ${activeTheme === 'y2k' ? 'text-pink-600' : 'text-cyan-500'}`} />
                         {eng.engine}
                       </h4>
                       <p className={`font-sans text-xs leading-relaxed ${
-                        'text-zinc-300'
+                        activeTheme === 'y2k' ? 'text-zinc-800' : 'text-zinc-300'
                       }`}>{eng.description}</p>
                     </div>
                   ))}
                 </div>
                 {activeProject.quote && (
                   <div className={`p-3 border-l-4 italic text-xs font-mono ${
-                    'bg-cyan-500/10 border-cyan-400 text-cyan-200'
+                    activeTheme === 'y2k'
+                      ? 'bg-cyan-200/50 border-cyan-700 text-cyan-950 font-bold'
+                      : 'bg-cyan-500/10 border-cyan-400 text-cyan-200'
                   }`}>
                     "{activeProject.quote}"
                   </div>
@@ -289,49 +306,51 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeTheme })
             {/* Problem & Approach Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 font-sans text-sm sm:text-base leading-relaxed mb-8">
               <div className="space-y-2">
-                <h4 className="font-mono font-bold text-xs text-red-600 uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-red-600 inline-block" /> {activeTheme === 'myspace' ? 'why i even made this' : 'Problem Formulation'}
+                <h4 className={`font-mono font-bold text-xs uppercase tracking-widest flex items-center gap-1.5 ${activeTheme === 'y2k' ? 'text-red-700 font-extrabold' : 'text-red-400'}`}>
+                  <span className={`w-2 h-2 rounded-full inline-block ${activeTheme === 'y2k' ? 'bg-red-700' : 'bg-red-400'}`} /> {activeTheme === 'myspace' ? 'why i even made this' : 'Problem Formulation'}
                 </h4>
-                <p className={'text-zinc-300'}>{activeProject.problem}</p>
+                <p className={activeTheme === 'y2k' ? 'text-zinc-900' : 'text-zinc-300'}>{activeProject.problem}</p>
               </div>
 
               <div className="space-y-2">
                 <h4 className={`font-mono font-bold text-xs uppercase tracking-widest flex items-center gap-1.5 ${
-                  'text-cyan-400'
+                  activeTheme === 'y2k' ? 'text-blue-800 font-extrabold' : 'text-cyan-400'
                 }`}>
-                  <span className="w-2 h-2 rounded-full bg-blue-600 inline-block" /> {activeTheme === 'myspace' ? 'how i did it' : 'System Approach'}
+                  <span className={`w-2 h-2 rounded-full inline-block ${activeTheme === 'y2k' ? 'bg-cyan-700' : 'bg-cyan-400'}`} /> {activeTheme === 'myspace' ? 'how i did it' : 'System Approach'}
                 </h4>
-                <p className={'text-zinc-300'}>{activeProject.approach}</p>
+                <p className={activeTheme === 'y2k' ? 'text-zinc-900' : 'text-zinc-300'}>{activeProject.approach}</p>
               </div>
             </div>
 
             {/* Result & Learned Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 font-sans text-sm sm:text-base leading-relaxed mb-8">
               <div className="space-y-2">
-                <h4 className="font-mono font-bold text-xs text-emerald-700 uppercase tracking-widest flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> {activeTheme === 'myspace' ? 'did it actually work' : 'Quantitative Result'}
+                <h4 className={`font-mono font-bold text-xs uppercase tracking-widest flex items-center gap-1.5 ${activeTheme === 'y2k' ? 'text-emerald-700 font-extrabold' : 'text-emerald-400'}`}>
+                  <CheckCircle2 className={`w-3.5 h-3.5 ${activeTheme === 'y2k' ? 'text-emerald-700' : 'text-emerald-400'}`} /> {activeTheme === 'myspace' ? 'did it actually work' : 'Quantitative Result'}
                 </h4>
-                <p className={'text-zinc-300'}>{activeProject.result}</p>
+                <p className={activeTheme === 'y2k' ? 'text-zinc-900' : 'text-zinc-300'}>{activeProject.result}</p>
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-mono font-bold text-xs text-purple-700 uppercase tracking-widest flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-600" /> {activeTheme === 'myspace' ? 'random thoughts abt it' : 'Key Takeaway & Learning'}
+                <h4 className={`font-mono font-bold text-xs uppercase tracking-widest flex items-center gap-1.5 ${activeTheme === 'y2k' ? 'text-purple-800 font-extrabold' : 'text-purple-400'}`}>
+                  <Sparkles className={`w-3.5 h-3.5 ${activeTheme === 'y2k' ? 'text-purple-700' : 'text-purple-400'}`} /> {activeTheme === 'myspace' ? 'random thoughts abt it' : 'Key Takeaway & Learning'}
                 </h4>
-                <p className={'text-zinc-300'}>{activeProject.learned}</p>
+                <p className={activeTheme === 'y2k' ? 'text-zinc-900' : 'text-zinc-300'}>{activeProject.learned}</p>
               </div>
             </div>
 
             {/* Technology Chips */}
             <div className={`pt-4 border-t flex flex-wrap items-center gap-2 ${
-              'border-white/10'
+              activeTheme === 'y2k' ? 'border-black/20' : 'border-white/10'
             }`}>
-              <span className={`text-xs font-mono mr-2 ${'text-zinc-400'}`}>TECH STACK:</span>
+              <span className={`text-xs font-mono mr-2 ${activeTheme === 'y2k' ? 'text-purple-900 font-extrabold' : 'text-zinc-400'}`}>TECH STACK:</span>
               {activeProject.technology.map((tech) => (
                 <span
                   key={tech}
                   className={`px-3 py-1 rounded-lg text-xs font-mono font-semibold border ${
-                    'bg-white/5 border-white/10 text-cyan-300'
+                    activeTheme === 'y2k'
+                      ? 'bg-white border-2 border-black text-purple-950 font-bold shadow-[2px_2px_0px_0px_#000]'
+                      : 'bg-white/5 border-white/10 text-cyan-300'
                   }`}
                 >
                   {tech}

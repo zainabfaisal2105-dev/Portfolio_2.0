@@ -43,7 +43,6 @@ import {
   Check
 } from 'lucide-react';
 import { ThemeMode, ProjectCaseStudy, CertificationItem } from '../types';
-import { AudioToggle } from './AudioToggle';
 import { GuestbookSection } from './GuestbookSection';
 import { StarryInspoBackground } from './StarryInspoBackground';
 
@@ -63,9 +62,6 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
   // Interactive States
   const [selectedProjectId, setSelectedProjectId] = useState<string>('tricore');
   const [activeEngine, setActiveEngine] = useState<'spark' | 'lens' | 'core'>('spark');
-  const [temperature, setTemperature] = useState(0.2);
-  const [ragContextLimit, setRagContextLimit] = useState(4);
-  const [strictGroundedness, setStrictGroundedness] = useState(true);
   const [showPhoto, setShowPhoto] = useState(false);
   const [friendToast, setFriendToast] = useState<string | null>(null);
 
@@ -87,7 +83,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
     {
       title: '1. The 2AM Coding Epiphany',
       past: {
-        speaker: 'PAST ME (2008 vibe)',
+        speaker: 'PAST ME',
         text: 'if i stay up until 4am and rewrite this entire codebase from scratch without any planning, it will definitely work first try and i will be a legendary hacker.',
         reaction: '😎 (fueled purely by optimism & cold coffee)'
       },
@@ -410,25 +406,25 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
             <div className="flex items-center gap-1.5 bg-[#070b16] px-2 py-1 border border-[#3b4d75]">
               <span className="text-[10px] text-[#8ea2c9] font-bold">★ [ SKINS ]:</span>
               <button
-                onClick={() => onThemeChange('myspace')}
-                className="px-1.5 py-0.5 bg-[#8ea2c9] text-black font-bold hover:underline cursor-pointer"
-                title="Current theme: MySpace Profile"
-              >
-                myspace ♥
-              </button>
-              <button
                 onClick={() => onThemeChange('neural')}
                 className="px-1.5 py-0.5 text-zinc-400 hover:text-white hover:underline cursor-pointer"
-                title="Switch to Neural Night"
+                title="Switch to DARK theme"
               >
-                neural
+                DARK
               </button>
               <button
                 onClick={() => onThemeChange('y2k')}
                 className="px-1.5 py-0.5 text-zinc-400 hover:text-white hover:underline cursor-pointer"
-                title="Switch to Y2K.exe"
+                title="Switch to PASTELSPACE"
               >
-                y2k.exe
+                PASTELSPACE
+              </button>
+              <button
+                onClick={() => onThemeChange('myspace')}
+                className="px-1.5 py-0.5 bg-[#8ea2c9] text-black font-bold hover:underline cursor-pointer"
+                title="Current theme: MYSPACE"
+              >
+                MYSPACE ♥
               </button>
             </div>
           </div>
@@ -1151,7 +1147,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
               </div>
             </div>
 
-            {/* 5. "how i think about AI" (AI Lab & Parameter Sandbox) */}
+            {/* 5. "how i think about AI" */}
             <div id="ailab" className="bg-[#0e1628] border-2 border-[#2f3e63] shadow-[4px_4px_0px_0px_#000]">
               <div className="bg-[#182542] px-4 py-2 font-mono font-bold text-sm text-[#eef1f7] border-b border-[#2f3e63] flex items-center justify-between">
                 <span>how i think about AI</span>
@@ -1161,74 +1157,8 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
                 <p className="font-sans text-xs sm:text-sm text-[#eef1f7] leading-relaxed">
                   "u cant just slap an API call on a prompt and call it an intelligent system lol... true AI engineering is about putting deterministic control guardrails around stochastic models."
                 </p>
-
-                {/* Interactive Parameter Sandbox */}
-                <div className="bg-[#090f1d] border border-[#253352] p-4 space-y-3">
-                  <div className="flex items-center justify-between border-b border-[#212c47] pb-2 text-[#8ea2c9] font-bold">
-                    <span className="flex items-center gap-1.5">
-                      <Sliders className="w-3.5 h-3.5" /> PARAMETER CONTROLLER SIMULATOR
-                    </span>
-                    <span className="text-[10px] text-emerald-400">READY</span>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[11px]">
-                        <span>Temperature: <strong className="text-[#8ea2c9]">{temperature}</strong></span>
-                        <span className="text-zinc-400">
-                          {temperature < 0.3 ? 'Deterministic / Strict' : temperature < 0.7 ? 'Balanced' : 'Creative / 2am energy'}
-                        </span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0.0"
-                        max="1.0"
-                        step="0.05"
-                        value={temperature}
-                        onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                        className="w-full accent-[#8ea2c9] cursor-pointer"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[11px]">
-                        <span>RAG Vector Context Chunks: <strong className="text-[#8ea2c9]">{ragContextLimit}</strong></span>
-                        <span className="text-zinc-400">{ragContextLimit * 512} tokens</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        step="1"
-                        value={ragContextLimit}
-                        onChange={(e) => setRagContextLimit(parseInt(e.target.value))}
-                        className="w-full accent-[#8ea2c9] cursor-pointer"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between p-2 bg-[#141f36] border border-[#2f3e63]">
-                      <span className="text-[11px]">Strict Grounding Guardrail:</span>
-                      <button
-                        onClick={() => setStrictGroundedness(!strictGroundedness)}
-                        className={`px-2 py-0.5 text-[10px] font-bold cursor-pointer ${
-                          strictGroundedness ? 'bg-emerald-500 text-black' : 'bg-zinc-700 text-zinc-300'
-                        }`}
-                      >
-                        {strictGroundedness ? 'ENABLED' : 'DISABLED'}
-                      </button>
-                    </div>
-
-                    <div className="p-2.5 bg-[#0e1628] border border-[#212c47] text-[11px] space-y-1">
-                      <span className="text-[#8ea2c9] block font-bold">Estimated System Profile:</span>
-                      <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                        <CheckCircle2 className="w-3 h-3" />
-                        <span>Hallucination Risk: {strictGroundedness ? '&lt; 0.1%' : '~ 12.4%'}</span>
-                      </div>
-                      <div className="text-zinc-400">
-                        Response Latency: ~{(120 + ragContextLimit * 25).toFixed(0)} ms
-                      </div>
-                    </div>
-                  </div>
+                <div className="p-3.5 bg-[#090f1d] border border-[#253352] text-[#8ea2c9] text-xs leading-relaxed">
+                  Focusing on model guardrails, rigorous evaluation pipelines, semantic grounding, and production safety.
                 </div>
               </div>
             </div>
@@ -1664,7 +1594,7 @@ export const MySpaceProfile: React.FC<MySpaceProfileProps> = ({
             </button>
           </p>
           <p className="text-[10px] text-zinc-500">
-            pls dont judge the layout lol... coded with react, css starlight, and caffeine at 2am &lt;3
+            pls dont judge the layout lol... coded with starlight and caffeine at 2am &lt;3
           </p>
         </div>
       </div>

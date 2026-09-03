@@ -39,22 +39,31 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     <section id="contact" className="py-20 relative font-mono scroll-mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-3 mb-12">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-400">
+          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${activeTheme === 'y2k' ? 'text-cyan-800' : 'text-cyan-400'}`}>
             <Mail className="w-4 h-4" />
             <span>{activeTheme === 'myspace' ? 'contact info' : 'CONNECT & COLLABORATE'}</span>
           </div>
           <h2
             className={`text-3xl sm:text-5xl font-extrabold tracking-tight ${
               activeTheme === 'y2k'
-                ? 'text-black drop-shadow-[2px_2px_0px_#10b981]'
+                ? 'drop-shadow-[2px_2px_0px_#10b981]'
                 : activeTheme === 'myspace'
                 ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000]'
                 : 'text-white'
             }`}
           >
-            {activeTheme === 'myspace' ? "how 2 reach me :P" : "Let's Build Something Intelligent."}
+            {activeTheme === 'myspace' ? (
+              "how 2 reach me :P"
+            ) : activeTheme === 'y2k' ? (
+              <>
+                <span className="text-purple-900">Let's Build</span>{' '}
+                <span className="text-pink-600">Something Intelligent.</span>
+              </>
+            ) : (
+              "Let's Build Something Intelligent."
+            )}
           </h2>
-          <p className="text-sm max-w-xl text-zinc-400">
+          <p className={`text-sm max-w-xl ${activeTheme === 'y2k' ? 'text-zinc-700' : 'text-zinc-400'}`}>
             Reach out directly for AI architectures, computer systems collaboration, or technical discussions.
           </p>
         </div>
@@ -73,16 +82,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30">
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${activeTheme === 'y2k' ? 'bg-cyan-200 text-cyan-900 border-cyan-500 font-extrabold' : 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'}`}>
                   PRIMARY EMAIL
                 </span>
-                <Mail className="w-5 h-5 text-cyan-400" />
+                <Mail className={`w-5 h-5 ${activeTheme === 'y2k' ? 'text-cyan-800' : 'text-cyan-400'}`} />
               </div>
-              <h3 className="text-xl font-bold font-mono">Direct Inbox</h3>
-              <p className="text-xs text-zinc-400 select-all font-mono break-all">
+              <h3 className={`text-xl font-bold font-mono ${activeTheme === 'y2k' ? 'text-pink-900 font-extrabold' : ''}`}>Direct Inbox</h3>
+              <p className={`text-xs select-all font-mono break-all ${activeTheme === 'y2k' ? 'text-zinc-800 font-bold' : 'text-zinc-400'}`}>
                 xanab2105@gmail.com
               </p>
-              <p className="text-xs text-zinc-500">
+              <p className={`text-xs ${activeTheme === 'y2k' ? 'text-zinc-700' : 'text-zinc-500'}`}>
                 Personal mailbox for research collaborations, projects, and queries.
               </p>
             </div>
@@ -96,9 +105,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               </a>
               <button
                 onClick={handleCopyEmail}
-                className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTheme === 'y2k' ? 'bg-white border-2 border-black text-black hover:bg-zinc-100 shadow-[2px_2px_0px_0px_#000]' : 'bg-white/5 hover:bg-white/10 border border-white/10 text-white'}`}
               >
-                {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                {copiedEmail ? <Check className={`w-4 h-4 ${activeTheme === 'y2k' ? 'text-emerald-700' : 'text-emerald-400'}`} /> : <Copy className="w-4 h-4" />}
                 {copiedEmail ? 'Copied to Clipboard!' : 'Copy Email Address'}
               </button>
             </div>
@@ -117,16 +126,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold border border-blue-500/30">
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${activeTheme === 'y2k' ? 'bg-blue-200 text-blue-900 border-blue-500 font-extrabold' : 'bg-blue-500/20 text-blue-400 border-blue-500/30'}`}>
                   PROFESSIONAL
                 </span>
-                <Linkedin className="w-5 h-5 text-blue-400" />
+                <Linkedin className={`w-5 h-5 ${activeTheme === 'y2k' ? 'text-blue-800' : 'text-blue-400'}`} />
               </div>
-              <h3 className="text-xl font-bold font-mono">LinkedIn</h3>
-              <p className="text-xs text-zinc-400 font-mono truncate">
+              <h3 className={`text-xl font-bold font-mono ${activeTheme === 'y2k' ? 'text-blue-950 font-extrabold' : ''}`}>LinkedIn</h3>
+              <p className={`text-xs font-mono truncate ${activeTheme === 'y2k' ? 'text-zinc-800 font-bold' : 'text-zinc-400'}`}>
                 linkedin.com/in/zainab-faisal-001320406
               </p>
-              <p className="text-xs text-zinc-500">
+              <p className={`text-xs ${activeTheme === 'y2k' ? 'text-zinc-700' : 'text-zinc-500'}`}>
                 Career journey, certifications, Panaversity updates, and connections.
               </p>
             </div>
@@ -156,16 +165,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1e293b] text-[#8ea2c9] font-bold border border-[#334155]">
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${activeTheme === 'y2k' ? 'bg-slate-300 text-slate-950 border-black font-extrabold' : 'bg-[#1e293b] text-[#8ea2c9] border-[#334155]'}`}>
                   CODE & BUILDS
                 </span>
-                <Github className="w-5 h-5 text-[#8ea2c9]" />
+                <Github className={`w-5 h-5 ${activeTheme === 'y2k' ? 'text-black' : 'text-[#8ea2c9]'}`} />
               </div>
-              <h3 className="text-xl font-bold font-mono">GitHub</h3>
-              <p className="text-xs text-zinc-400 font-mono truncate">
+              <h3 className={`text-xl font-bold font-mono ${activeTheme === 'y2k' ? 'text-slate-950 font-extrabold' : ''}`}>GitHub</h3>
+              <p className={`text-xs font-mono truncate ${activeTheme === 'y2k' ? 'text-zinc-800 font-bold' : 'text-zinc-400'}`}>
                 github.com / zainabfaisal
               </p>
-              <p className="text-xs text-zinc-500">
+              <p className={`text-xs ${activeTheme === 'y2k' ? 'text-zinc-700' : 'text-zinc-500'}`}>
                 Open-source repositories, AI experiments, and low-level system code.
               </p>
             </div>
@@ -175,7 +184,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 px-4 rounded-xl bg-[#1e293b] hover:bg-[#334155] text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md border border-[#475569]"
+                className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md ${activeTheme === 'y2k' ? 'bg-black text-white hover:bg-zinc-800 border-2 border-black' : 'bg-[#1e293b] hover:bg-[#334155] text-white border border-[#475569]'}`}
               >
                 <Github className="w-4 h-4" /> View GitHub <ExternalLink className="w-3.5 h-3.5" />
               </a>

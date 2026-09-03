@@ -36,23 +36,40 @@ export const SecuritySection: React.FC<SecuritySectionProps> = ({ activeTheme })
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="space-y-2 mb-12">
-          <div className="flex items-center gap-2 text-xs text-emerald-400 font-bold uppercase tracking-widest">
+          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${activeTheme === 'y2k' ? 'text-emerald-800' : 'text-emerald-400'}`}>
             <ShieldCheck className="w-4 h-4" />
             <span>{activeTheme === 'myspace' ? 'nosy about security lol' : 'SYSTEM DEFENSE & CURIOSITY'}</span>
           </div>
           <h2
             className={`text-3xl sm:text-5xl font-extrabold tracking-tight ${
               activeTheme === 'y2k'
-                ? 'text-black drop-shadow-[2px_2px_0px_#10b981]'
+                ? 'drop-shadow-[2px_2px_0px_#10b981]'
                 : activeTheme === 'myspace'
                 ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000] myspace-glow-text'
                 : 'text-white'
             }`}
           >
-            {activeTheme === 'myspace' ? 'security stuff i think about' : 'Security Curiosity'}
+            {activeTheme === 'myspace' ? (
+              'security stuff i think about'
+            ) : activeTheme === 'y2k' ? (
+              <>
+                <span className="text-purple-900">Security</span>{' '}
+                <span className="text-emerald-700">Curiosity</span>
+              </>
+            ) : (
+              'Security Curiosity'
+            )}
           </h2>
-          <p className={`text-sm max-w-2xl ${'text-zinc-400'}`}>
-            {activeTheme === 'myspace' ? 'idk i just like knowing how stuff breaks n how 2 stop it lol' : '"I am interested in understanding how systems communicate, fail, and can be protected."'}
+          <p className={`text-sm max-w-2xl ${activeTheme === 'y2k' ? 'text-zinc-700' : 'text-zinc-400'}`}>
+            {activeTheme === 'myspace' ? (
+              'idk i just like knowing how stuff breaks n how 2 stop it lol'
+            ) : activeTheme === 'y2k' ? (
+              <>
+                "I am interested in understanding how <span className="text-blue-800 font-bold">systems communicate</span>, <span className="text-pink-600 font-bold">fail</span>, and can be <span className="text-emerald-700 font-bold">protected</span>."
+              </>
+            ) : (
+              '"I am interested in understanding how systems communicate, fail, and can be protected."'
+            )}
           </p>
         </div>
 
@@ -77,10 +94,20 @@ export const SecuritySection: React.FC<SecuritySectionProps> = ({ activeTheme })
                 <div className={`p-2.5 rounded-xl shrink-0 ${'bg-black/20'}`}>
                   {item.icon}
                 </div>
-                <h3 className="text-lg font-bold font-mono">{item.title}</h3>
+                <h3 className={`text-lg font-bold font-mono ${
+                  activeTheme === 'y2k'
+                    ? idx === 0
+                      ? 'text-cyan-950 font-extrabold'
+                      : idx === 1
+                      ? 'text-purple-950 font-extrabold'
+                      : idx === 2
+                      ? 'text-emerald-950 font-extrabold'
+                      : 'text-pink-950 font-extrabold'
+                    : ''
+                }`}>{item.title}</h3>
               </div>
               <p className={`text-xs sm:text-sm font-sans leading-relaxed ${
-                'text-zinc-300'
+                activeTheme === 'y2k' ? 'text-zinc-800' : 'text-zinc-300'
               }`}>
                 {item.desc}
               </p>

@@ -43,20 +43,29 @@ export const CurrentlyExploring: React.FC<CurrentlyExploringProps> = ({ activeTh
         {/* Currently Exploring Section */}
         <div>
           <div className="space-y-2 mb-10">
-            <div className="flex items-center gap-2 text-xs text-cyan-400 font-bold uppercase tracking-widest">
+            <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${activeTheme === 'y2k' ? 'text-cyan-800' : 'text-cyan-400'}`}>
               <Compass className="w-4 h-4" />
               <span>{activeTheme === 'myspace' ? 'what ive been up 2' : 'LIVING RESEARCH HORIZON'}</span>
             </div>
             <h2
               className={`text-3xl sm:text-5xl font-extrabold tracking-tight ${
                 activeTheme === 'y2k'
-                  ? 'text-black drop-shadow-[2px_2px_0px_#ec4899]'
+                  ? 'drop-shadow-[2px_2px_0px_#ec4899]'
                   : activeTheme === 'myspace'
                   ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000] myspace-glow-text'
                   : 'text-white'
               }`}
             >
-              {activeTheme === 'myspace' ? "stuff im into rn" : "What I'm Exploring"}
+              {activeTheme === 'myspace' ? (
+                "stuff im into rn"
+              ) : activeTheme === 'y2k' ? (
+                <>
+                  <span className="text-purple-900">What I'm</span>{' '}
+                  <span className="text-pink-600">Exploring</span>
+                </>
+              ) : (
+                "What I'm Exploring"
+              )}
             </h2>
           </div>
 
@@ -71,23 +80,46 @@ export const CurrentlyExploring: React.FC<CurrentlyExploringProps> = ({ activeTh
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                  activeTheme === 'myspace' ? 'bg-[#8ea2c9] text-black' : 'bg-cyan-500 text-black'
+                  activeTheme === 'myspace'
+                    ? 'bg-[#8ea2c9] text-black'
+                    : activeTheme === 'y2k'
+                    ? 'bg-cyan-400 text-black border-2 border-black font-extrabold'
+                    : 'bg-cyan-500 text-black'
                 }`}>
                   {activeTheme === 'myspace' ? "currently doing this lol" : 'ENROLLED / PARTICIPATING'}
                 </span>
                 <h3 className={`text-lg sm:text-xl font-bold font-mono mt-1 ${
-                  activeTheme === 'myspace' ? 'text-[#eef1f7]' : 'text-white'
+                  activeTheme === 'myspace'
+                    ? 'text-[#eef1f7]'
+                    : activeTheme === 'y2k'
+                    ? 'text-purple-950 font-extrabold'
+                    : 'text-white'
                 }`}>
-                  Panaversity Agentic AI Architect Program
+                  {activeTheme === 'y2k' ? (
+                    <>
+                      <span className="text-purple-950">Panaversity</span>{' '}
+                      <span className="text-pink-700">Agentic AI Architect Program</span>
+                    </>
+                  ) : (
+                    'Panaversity Agentic AI Architect Program'
+                  )}
                 </h3>
                 <p className={`text-xs font-sans ${
-                  activeTheme === 'myspace' ? 'text-[#c7ccd6]/80' : 'text-slate-300'
+                  activeTheme === 'myspace'
+                    ? 'text-[#c7ccd6]/80'
+                    : activeTheme === 'y2k'
+                    ? 'text-zinc-800 font-medium'
+                    : 'text-slate-300'
                 }`}>
                   {activeTheme === 'myspace' ? 'basically learning how 2 make ai agents that actually do stuff on their own. its a lot but i luv it' : 'Deep diving into autonomous multi-agent frameworks, LangGraph, AutoGen, and modern AI architecture.'}
                 </p>
               </div>
               <Sparkles className={`w-8 h-8 shrink-0 animate-pulse ${
-                activeTheme === 'myspace' ? 'text-[#8ea2c9]' : 'text-cyan-400'
+                activeTheme === 'myspace'
+                  ? 'text-[#8ea2c9]'
+                  : activeTheme === 'y2k'
+                  ? 'text-pink-600'
+                  : 'text-cyan-400'
               }`} />
             </div>
           </div>
@@ -110,12 +142,26 @@ export const CurrentlyExploring: React.FC<CurrentlyExploringProps> = ({ activeTh
                 }`}
               >
                 <div className={`p-2.5 rounded-lg w-fit mb-3 ${
-                  'bg-black/30'
+                  activeTheme === 'y2k' ? 'bg-white border border-black shadow-[2px_2px_0px_0px_#000]' : 'bg-black/30'
                 }`}>
                   {item.icon}
                 </div>
-                <h4 className="font-bold text-sm sm:text-base font-mono mb-1">{item.name}</h4>
-                <p className={`text-xs font-sans ${'text-zinc-400'}`}>{item.desc}</p>
+                <h4 className={`font-bold text-sm sm:text-base font-mono mb-1 ${
+                  activeTheme === 'y2k'
+                    ? idx === 0
+                      ? 'text-cyan-950 font-extrabold'
+                      : idx === 1
+                      ? 'text-purple-950 font-extrabold'
+                      : idx === 2
+                      ? 'text-emerald-950 font-extrabold'
+                      : idx === 3
+                      ? 'text-pink-950 font-extrabold'
+                      : idx === 4
+                      ? 'text-blue-950 font-extrabold'
+                      : 'text-indigo-950 font-extrabold'
+                    : ''
+                }`}>{item.name}</h4>
+                <p className={`text-xs font-sans ${activeTheme === 'y2k' ? 'text-zinc-700 font-medium' : 'text-zinc-400'}`}>{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -125,7 +171,7 @@ export const CurrentlyExploring: React.FC<CurrentlyExploringProps> = ({ activeTh
         <div>
           <div className="space-y-2 mb-10">
             <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${
-              'text-purple-400'
+              activeTheme === 'y2k' ? 'text-purple-900 font-extrabold' : 'text-purple-400'
             }`}>
               <Award className="w-4 h-4" />
               <span>{activeTheme === 'myspace' ? 'random achievements ig' : 'HONORS & CREDENTIALS'}</span>
@@ -133,13 +179,22 @@ export const CurrentlyExploring: React.FC<CurrentlyExploringProps> = ({ activeTh
             <h2
               className={`text-3xl sm:text-5xl font-extrabold tracking-tight ${
                 activeTheme === 'y2k'
-                  ? 'text-black drop-shadow-[2px_2px_0px_#a855f7]'
+                  ? 'drop-shadow-[2px_2px_0px_#a855f7]'
                   : activeTheme === 'myspace'
                   ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000] myspace-glow-text'
                   : 'text-white'
               }`}
             >
-              {activeTheme === 'myspace' ? 'certs n stuff i got' : 'Certifications & Honors'}
+              {activeTheme === 'myspace' ? (
+                'certs n stuff i got'
+              ) : activeTheme === 'y2k' ? (
+                <>
+                  <span className="text-purple-900">Certifications &</span>{' '}
+                  <span className="text-pink-600">Honors</span>
+                </>
+              ) : (
+                'Certifications & Honors'
+              )}
             </h2>
           </div>
 
@@ -161,15 +216,17 @@ export const CurrentlyExploring: React.FC<CurrentlyExploringProps> = ({ activeTh
               >
                 <div className="flex items-center justify-between mb-3 gap-2">
                   <span className={`px-3 py-1 rounded-full text-[10px] font-bold font-mono border ${
-                    'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                    activeTheme === 'y2k'
+                      ? 'bg-purple-200 text-purple-950 border-purple-600 font-extrabold'
+                      : 'bg-purple-500/20 text-purple-300 border-purple-500/30'
                   }`}>
                     {cert.badge}
                   </span>
-                  <Award className={`w-5 h-5 shrink-0 ${'text-purple-400'}`} />
+                  <Award className={`w-5 h-5 shrink-0 ${activeTheme === 'y2k' ? 'text-purple-800' : 'text-purple-400'}`} />
                 </div>
-                <h3 className="text-base sm:text-lg font-bold font-mono mb-1">{cert.title}</h3>
-                <p className={`text-xs font-mono mb-2 ${'text-cyan-400'}`}>{cert.issuer}</p>
-                <p className={`text-xs font-sans leading-relaxed ${'text-zinc-400'}`}>{cert.description}</p>
+                <h3 className={`text-base sm:text-lg font-bold font-mono mb-1 ${activeTheme === 'y2k' ? 'text-purple-950 font-extrabold' : ''}`}>{cert.title}</h3>
+                <p className={`text-xs font-mono mb-2 ${activeTheme === 'y2k' ? 'text-pink-700 font-extrabold' : 'text-cyan-400'}`}>{cert.issuer}</p>
+                <p className={`text-xs font-sans leading-relaxed ${activeTheme === 'y2k' ? 'text-zinc-800' : 'text-zinc-400'}`}>{cert.description}</p>
               </motion.div>
             ))}
           </div>

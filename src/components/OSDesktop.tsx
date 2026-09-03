@@ -51,7 +51,7 @@ export const OSDesktop: React.FC<OSDesktopProps> = ({ activeTheme, onOpenTermina
           <span className="flex items-center gap-1.5 font-bold">
             <Monitor className="w-3.5 h-3.5" /> Zainab.OS Core (v2.0)
           </span>
-          <span className="flex items-center gap-3 text-[10px] opacity-80">
+          <span className={`flex items-center gap-3 text-[10px] ${isY2k ? 'text-zinc-800 font-bold' : 'opacity-80'}`}>
             <span>Active Tasks: {activeTasks}</span>
             <span>
               {now.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' })}{' '}

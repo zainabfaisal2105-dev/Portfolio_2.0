@@ -31,7 +31,7 @@ export const ThemeControlWidget: React.FC<ThemeControlWidgetProps> = ({
             }`}
           >
             <div className="flex items-center justify-between pb-2 mb-2 border-b border-current/30 font-bold">
-              <span className="flex items-center gap-1.5">
+              <span className={`flex items-center gap-1.5 ${activeTheme === 'y2k' ? 'text-purple-900 font-extrabold' : ''}`}>
                 <span>★</span> SELECT PAGE SKIN <span>★</span>
               </span>
               <button
@@ -46,36 +46,20 @@ export const ThemeControlWidget: React.FC<ThemeControlWidgetProps> = ({
             <div className="space-y-1.5">
               <button
                 onClick={() => {
-                  onThemeChange('myspace');
-                  setIsOpen(false);
-                }}
-                className={`w-full text-left px-2.5 py-1.5 border flex items-center justify-between cursor-pointer font-bold transition-all ${
-                  activeTheme === 'myspace'
-                    ? 'bg-[#8ea2c9] text-black border-white'
-                    : 'bg-black/30 hover:bg-black/50 border-[#8ea2c9]/40 text-[#c7ccd6]'
-                }`}
-              >
-                <span className="flex items-center gap-2">
-                  <Heart className="w-3.5 h-3.5 fill-current" />
-                  <span>MySpace.profile (2000s)</span>
-                </span>
-                {activeTheme === 'myspace' && <span>✓</span>}
-              </button>
-
-              <button
-                onClick={() => {
                   onThemeChange('neural');
                   setIsOpen(false);
                 }}
                 className={`w-full text-left px-2.5 py-1.5 border flex items-center justify-between cursor-pointer font-bold transition-all ${
                   activeTheme === 'neural'
                     ? 'bg-cyan-500 text-black border-white'
+                    : activeTheme === 'y2k'
+                    ? 'bg-white hover:bg-zinc-100 border-black text-black'
                     : 'bg-black/30 hover:bg-black/50 border-white/20 text-zinc-300'
                 }`}
               >
                 <span className="flex items-center gap-2">
                   <Moon className="w-3.5 h-3.5" />
-                  <span>Neural Night (AI Mode)</span>
+                  <span>DARK</span>
                 </span>
                 {activeTheme === 'neural' && <span>✓</span>}
               </button>
@@ -93,13 +77,33 @@ export const ThemeControlWidget: React.FC<ThemeControlWidgetProps> = ({
               >
                 <span className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Y2K.EXE (Retro Window)</span>
+                  <span>PASTELSPACE</span>
                 </span>
                 {activeTheme === 'y2k' && <span>✓</span>}
               </button>
+
+              <button
+                onClick={() => {
+                  onThemeChange('myspace');
+                  setIsOpen(false);
+                }}
+                className={`w-full text-left px-2.5 py-1.5 border flex items-center justify-between cursor-pointer font-bold transition-all ${
+                  activeTheme === 'myspace'
+                    ? 'bg-[#8ea2c9] text-black border-white'
+                    : activeTheme === 'y2k'
+                    ? 'bg-white hover:bg-zinc-100 border-black text-black'
+                    : 'bg-black/30 hover:bg-black/50 border-[#8ea2c9]/40 text-[#c7ccd6]'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <Heart className="w-3.5 h-3.5 fill-current" />
+                  <span>MYSPACE</span>
+                </span>
+                {activeTheme === 'myspace' && <span>✓</span>}
+              </button>
             </div>
 
-            <p className="text-[10px] opacity-70 pt-2 text-center">
+            <p className={`text-[10px] pt-2 text-center ${activeTheme === 'y2k' ? 'text-zinc-800 font-semibold' : 'opacity-70'}`}>
               switching skins preserves all project data & contact features
             </p>
           </motion.div>
@@ -117,8 +121,8 @@ export const ThemeControlWidget: React.FC<ThemeControlWidgetProps> = ({
         }`}
         title="Change Portfolio Skin / Theme"
       >
-        <span className="text-cyan-400">★</span>
-        <span>[ change skin: <strong className="underline decoration-dotted">{activeTheme}</strong> ▾ ]</span>
+        <span className={activeTheme === 'y2k' ? 'text-black' : 'text-cyan-400'}>★</span>
+        <span>[ change skin: <strong className="underline decoration-dotted">{activeTheme === 'neural' ? 'DARK' : activeTheme === 'y2k' ? 'PASTELSPACE' : 'MYSPACE'}</strong> ▾ ]</span>
       </button>
     </div>
   );

@@ -14,7 +14,6 @@ import {
   Laptop
 } from 'lucide-react';
 import { ThemeMode } from '../types';
-import { AudioToggle } from './AudioToggle';
 
 interface NavbarProps {
   activeTheme: ThemeMode;
@@ -86,12 +85,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div className="flex flex-col min-w-0">
             <span className="font-bold tracking-wider text-xs sm:text-sm font-mono flex items-center gap-1">
-              ZAINAB FAISAL
-              {activeTheme === 'y2k' && <span className="text-xs">★</span>}
-              {activeTheme === 'myspace' && <span className="text-[#8ea2c9] text-xs myspace-heart-pulse">♥</span>}
+              {activeTheme === 'y2k' ? (
+                <>
+                  <span className="text-purple-900">ZAINAB</span>{' '}
+                  <span className="text-pink-600">FAISAL</span>
+                  <span className="text-pink-600 text-xs">★</span>
+                </>
+              ) : (
+                <>
+                  ZAINAB FAISAL
+                  {activeTheme === 'myspace' && <span className="text-[#8ea2c9] text-xs myspace-heart-pulse">♥</span>}
+                </>
+              )}
             </span>
-            <span className={`text-[10px] opacity-70 tracking-widest font-mono ${activeTheme === 'myspace' ? 'text-[#c7ccd6]' : ''}`}>
-              {activeTheme === 'myspace' ? 'a place 4 my stuff' : 'AI • SYSTEMS'}
+            <span className={`text-[10px] tracking-widest font-mono ${activeTheme === 'y2k' ? 'text-cyan-800 font-extrabold' : activeTheme === 'myspace' ? 'text-[#c7ccd6] opacity-70' : 'opacity-70'}`}>
+              {activeTheme === 'myspace' ? 'a place 4 my stuff' : activeTheme === 'y2k' ? 'AI • SYSTEMS' : 'AI • SYSTEMS'}
             </span>
           </div>
         </a>
@@ -117,9 +125,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Action Controls */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          {/* Background Music Toggle (Y2K / MySpace only) */}
-          <AudioToggle activeTheme={activeTheme} />
-
           {/* Hacking Terminal Trigger Button */}
           <button
             onClick={onOpenTerminal}
@@ -147,37 +152,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <button
               onClick={() => onThemeChange('neural')}
-              title="Neural Night (AI Developer Mode)"
+              title="DARK"
               className={`px-2 py-1 rounded-lg flex items-center gap-1 transition-all cursor-pointer ${
                 activeTheme === 'neural'
                   ? 'bg-cyan-500 text-black font-bold shadow-sm'
                   : activeTheme === 'myspace'
                   ? 'text-[#c7ccd6]/70 hover:text-[#c7ccd6] hover:bg-[#8ea2c9]/20'
+                  : activeTheme === 'y2k'
+                  ? 'text-black font-bold hover:text-black hover:bg-black/10'
                   : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               <Moon className="w-3 h-3" />
-              <span className="hidden xl:inline">Neural</span>
-            </button>
-
-            <button
-              onClick={() => onThemeChange('myspace')}
-              title="MySpace.profile (Early-2000s Personal Page Mode)"
-              className={`px-2 py-1 rounded-lg flex items-center gap-1 transition-all cursor-pointer ${
-                activeTheme === 'myspace'
-                  ? 'bg-[#8ea2c9] text-white font-bold shadow-sm'
-                  : activeTheme === 'y2k'
-                  ? 'text-black/70 hover:text-black hover:bg-black/10'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <Heart className="w-3 h-3" />
-              <span className="hidden xl:inline">MySpace</span>
+              <span className="hidden xl:inline">DARK</span>
             </button>
 
             <button
               onClick={() => onThemeChange('y2k')}
-              title="Y2K.EXE (Retro MySpace Pixel Window Mode)"
+              title="PASTELSPACE"
               className={`px-2 py-1 rounded-lg flex items-center gap-1 transition-all cursor-pointer ${
                 activeTheme === 'y2k'
                   ? 'bg-black text-pink-300 font-bold shadow-sm'
@@ -187,7 +179,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Sparkles className="w-3 h-3" />
-              <span className="hidden xl:inline">Y2K.exe</span>
+              <span className="hidden xl:inline">PASTELSPACE</span>
+            </button>
+
+            <button
+              onClick={() => onThemeChange('myspace')}
+              title="MYSPACE"
+              className={`px-2 py-1 rounded-lg flex items-center gap-1 transition-all cursor-pointer ${
+                activeTheme === 'myspace'
+                  ? 'bg-[#8ea2c9] text-white font-bold shadow-sm'
+                  : activeTheme === 'y2k'
+                  ? 'text-black font-bold hover:text-black hover:bg-black/10'
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Heart className="w-3 h-3" />
+              <span className="hidden xl:inline">MYSPACE</span>
             </button>
           </div>
 
@@ -239,12 +246,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onOpenTerminal();
                 }}
                 className={`w-full py-2 rounded-lg font-mono text-xs font-bold flex items-center justify-center gap-2 cursor-pointer ${
-                  'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
+                  activeTheme === 'y2k'
+                    ? 'bg-black text-white border-2 border-black'
+                    : 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
                 }`}
               >
                 <TerminalIcon className="w-4 h-4 text-emerald-400" /> Open Hacking Terminal
               </button>
-              <AudioToggle activeTheme={activeTheme} variant="mobile" />
             </div>
           </motion.div>
         )}

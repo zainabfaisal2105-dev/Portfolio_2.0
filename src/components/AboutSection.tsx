@@ -61,20 +61,29 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ activeTheme }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="space-y-2 mb-12">
-          <div className="flex items-center gap-2 text-xs text-cyan-400 font-bold uppercase tracking-widest">
+          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${activeTheme === 'y2k' ? 'text-cyan-800' : 'text-cyan-400'}`}>
             <Layers className="w-4 h-4" />
             <span>{activeTheme === 'myspace' ? 'xX_about_me_Xx' : 'CORE IDENTITY'}</span>
           </div>
           <h2
             className={`text-3xl sm:text-5xl font-extrabold tracking-tight ${
               activeTheme === 'y2k'
-                ? 'text-black drop-shadow-[2px_2px_0px_#ec4899]'
+                ? 'drop-shadow-[2px_2px_0px_#ec4899]'
                 : activeTheme === 'myspace'
                 ? 'text-[#c7ccd6] drop-shadow-[2px_2px_0px_#000] myspace-glow-text'
                 : 'text-white'
             }`}
           >
-            {activeTheme === 'myspace' ? 'stuff about me i guess' : 'How I Think About Technology'}
+            {activeTheme === 'myspace' ? (
+              'stuff about me i guess'
+            ) : activeTheme === 'y2k' ? (
+              <>
+                <span className="text-purple-900">How I Think About</span>{' '}
+                <span className="text-pink-600">Technology</span>
+              </>
+            ) : (
+              'How I Think About Technology'
+            )}
           </h2>
         </div>
 
@@ -127,26 +136,38 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ activeTheme }) => {
             }`}
           >
             <div className="space-y-6 text-base sm:text-lg leading-relaxed font-sans">
-              <p className={`font-bold text-lg sm:text-xl font-mono ${'text-cyan-400'}`}>
-                "My interest in computer science started from understanding what happens beneath the surface."
+              <p className={`font-bold text-lg sm:text-xl font-mono ${
+                activeTheme === 'y2k' ? 'text-black' : 'text-cyan-400'
+              }`}>
+                {activeTheme === 'y2k' ? (
+                  <>
+                    "My interest in <span className="text-purple-800">computer science</span> started from understanding what happens <span className="text-pink-600">beneath the surface</span>."
+                  </>
+                ) : (
+                  '"My interest in computer science started from understanding what happens beneath the surface."'
+                )}
               </p>
-              <p className={'text-zinc-300'}>
+              <p>
                 From memory, instructions, and architecture to networks and artificial intelligence.
               </p>
-              <p className={'text-zinc-300'}>
-                I enjoy moving between layers: <strong className={'text-purple-400'}>low-level systems</strong>, <strong className={'text-cyan-400'}>software engineering</strong>, and <strong className={'text-emerald-400'}>intelligent applications</strong>.
+              <p>
+                I enjoy moving between layers:{' '}
+                <strong className={activeTheme === 'y2k' ? 'text-purple-800 font-extrabold' : 'text-purple-400'}>low-level systems</strong>,{' '}
+                <strong className={activeTheme === 'y2k' ? 'text-blue-800 font-extrabold' : 'text-cyan-400'}>software engineering</strong>, and{' '}
+                <strong className={activeTheme === 'y2k' ? 'text-emerald-700 font-extrabold' : 'text-emerald-400'}>intelligent applications</strong>.
               </p>
-              <p className={'text-zinc-300'}>
-                Currently exploring AI systems, LLM applications, and agentic AI.
+              <p>
+                Currently exploring{' '}
+                <span className={activeTheme === 'y2k' ? 'text-pink-600 font-bold' : ''}>AI systems</span>,{' '}
+                <span className={activeTheme === 'y2k' ? 'text-purple-800 font-bold' : ''}>LLM applications</span>, and{' '}
+                <span className={activeTheme === 'y2k' ? 'text-cyan-800 font-bold' : ''}>agentic AI</span>.
               </p>
             </div>
 
             {/* Quote Footer Tag */}
-            <div className={`pt-6 mt-6 border-t flex items-center justify-between text-xs font-mono ${
-              'border-white/10 text-zinc-400'
-            }`}>
+            <div className={`pt-6 mt-6 border-t flex items-center justify-between text-xs font-mono ${activeTheme === 'y2k' ? 'border-black/20 text-zinc-800' : 'border-white/10 text-zinc-400'}`}>
               <span>Zainab Faisal -- UMT CS Lab</span>
-              <span className={'text-emerald-400'}>● Systems Active</span>
+              <span className={activeTheme === 'y2k' ? 'text-emerald-800 font-bold' : 'text-emerald-400'}>● Systems Active</span>
             </div>
           </motion.div>
           )}
@@ -172,8 +193,18 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ activeTheme }) => {
                   {item.icon}
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm sm:text-base font-mono">{item.title}</h3>
-                  <p className="text-xs text-zinc-400 mt-1">{item.desc}</p>
+                  <h3 className={`font-bold text-sm sm:text-base font-mono ${
+                    activeTheme === 'y2k'
+                      ? idx === 0
+                        ? 'text-cyan-950'
+                        : idx === 1
+                        ? 'text-purple-950'
+                        : idx === 2
+                        ? 'text-emerald-950'
+                        : 'text-indigo-950'
+                      : ''
+                  }`}>{item.title}</h3>
+                  <p className={`text-xs mt-1 ${activeTheme === 'y2k' ? 'text-zinc-800 font-medium' : 'text-zinc-400'}`}>{item.desc}</p>
                 </div>
               </motion.div>
             ))}
