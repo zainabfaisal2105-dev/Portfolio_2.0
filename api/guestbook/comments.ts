@@ -1,4 +1,4 @@
-import { addGuestbookComment } from "../../server/storage";
+import { addGuestbookComment } from "../../../../server/storage.js";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
