@@ -1,4 +1,4 @@
-import { getUpstashCredentials, getRedisClient, loadGuestbook } from "../../server/storage";
+import { getUpstashCredentials, getRedisClient, loadGuestbook } from "../../server/storage.js";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");
