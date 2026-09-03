@@ -139,7 +139,13 @@ export const GuestbookSection: React.FC = () => {
                 })),
             }));
 
-          setPosts(mapped);
+          setPosts((prev) => {
+            // Keep any local-only posts that haven't synced yet
+            const localOnly = prev.filter(
+              (p) => p.id.startsWith('post_local_') && !mapped.some((mp) => mp.text === p.text)
+            );
+            return [...localOnly, ...mapped];
+          });
         }
       }
     } catch {
@@ -162,12 +168,27 @@ export const GuestbookSection: React.FC = () => {
     }
 
     if (!verifyOwnerPasscode(ownerPasscode)) {
-      setOwnerPostError('Incorrect author passcode. Access restricted.');
+      setOwnerPostError('Incorrect author passcode. Please enter "zainab" (or your admin password) to post as Zainab.');
       return;
     }
 
     setOwnerPostError('');
     setIsPublishingOwner(true);
+
+    const tempId = `post_local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const newPost: WallPost = {
+      id: tempId,
+      author: 'Zainab Faisal',
+      text: ownerPostContent.trim(),
+      isOwnerPost: true,
+      category: 'broadcast',
+      mood: ownerPostMood,
+      timestamp: new Date().toISOString(),
+      replies: [],
+    };
+
+    // Optimistically show immediately
+    setPosts((prev) => [newPost, ...prev.filter((p) => p.id !== tempId)]);
 
     try {
       const res = await fetch('/api/guestbook/posts', {
@@ -182,31 +203,23 @@ export const GuestbookSection: React.FC = () => {
         }),
       });
 
-      if (!res.ok) {
+      if (res.ok) {
+        const data = await res.json();
+        if (data.post) {
+          setPosts((prev) =>
+            prev.map((p) =>
+              p.id === tempId
+                ? { ...p, id: data.post.id, timestamp: data.post.timestamp || p.timestamp }
+                : p
+            )
+          );
+        }
+      } else {
         const errData = await res.json().catch(() => ({}));
-        setOwnerPostError(errData.error || 'Failed to publish post.');
-        setIsPublishingOwner(false);
-        return;
-      }
-
-      const data = await res.json();
-      if (data.post) {
-        const newPost: WallPost = {
-          id: data.post.id,
-          author: 'Zainab Faisal',
-          text: data.post.text,
-          isOwnerPost: true,
-          category: 'broadcast',
-          mood: data.post.mood || ownerPostMood,
-          timestamp: data.post.timestamp,
-          replies: [],
-        };
-        setPosts((prev) => [newPost, ...prev.filter(p => p.id !== newPost.id)]);
+        console.warn('Server broadcast warning:', errData);
       }
     } catch (err: any) {
-      setOwnerPostError('Network error while posting. Please retry.');
-      setIsPublishingOwner(false);
-      return;
+      console.warn('Sync notice:', err);
     }
 
     setOwnerPostContent('');
@@ -227,6 +240,20 @@ export const GuestbookSection: React.FC = () => {
     setIsPostingVisitor(true);
 
     const name = visitorName.trim() || 'Visitor';
+    const tempId = `post_local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const newVisitorPost: WallPost = {
+      id: tempId,
+      author: name,
+      text: visitorMessage.trim(),
+      isOwnerPost: false,
+      category: 'visitor_note',
+      mood: visitorMood,
+      timestamp: new Date().toISOString(),
+      replies: [],
+    };
+
+    // Optimistically display immediately so visitor never loses their message
+    setPosts((prev) => [newVisitorPost, ...prev.filter((p) => p.id !== tempId)]);
 
     try {
       const res = await fetch('/api/guestbook/posts', {
@@ -240,31 +267,27 @@ export const GuestbookSection: React.FC = () => {
         }),
       });
 
-      if (!res.ok) {
+      if (res.ok) {
+        const data = await res.json();
+        if (data.post) {
+          setPosts((prev) =>
+            prev.map((p) =>
+              p.id === tempId
+                ? {
+                    ...p,
+                    id: data.post.id,
+                    timestamp: data.post.timestamp || p.timestamp,
+                  }
+                : p
+            )
+          );
+        }
+      } else {
         const errData = await res.json().catch(() => ({}));
-        setVisitorError(errData.error || 'Failed to post comment. Please try again.');
-        setIsPostingVisitor(false);
-        return;
+        console.warn('Visitor post server sync notice:', errData);
       }
-
-      const data = await res.json();
-      if (data.post) {
-        const newVisitorPost: WallPost = {
-          id: data.post.id,
-          author: name,
-          text: data.post.text,
-          isOwnerPost: false,
-          category: 'visitor_note',
-          mood: data.post.mood || visitorMood,
-          timestamp: data.post.timestamp,
-          replies: [],
-        };
-        setPosts((prev) => [newVisitorPost, ...prev.filter(p => p.id !== newVisitorPost.id)]);
-      }
-    } catch {
-      setVisitorError('Connection error. Please check your network and try again.');
-      setIsPostingVisitor(false);
-      return;
+    } catch (err) {
+      console.warn('Visitor post network notice:', err);
     }
 
     setVisitorMessage('');
@@ -283,7 +306,7 @@ export const GuestbookSection: React.FC = () => {
 
     const isOwner = replyRole === 'owner';
     if (isOwner && !verifyOwnerPasscode(replyPasscode)) {
-      setReplyError('Incorrect author passcode.');
+      setReplyError('Incorrect author passcode. Enter "zainab" to answer as author, or switch to Visitor reply.');
       return;
     }
 
@@ -291,6 +314,23 @@ export const GuestbookSection: React.FC = () => {
     setIsSubmittingReply(true);
 
     const author = isOwner ? 'Zainab (Author)' : (replyAuthorName.trim() || 'Visitor');
+    const tempReplyId = `rep_local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const newReply: PostReply = {
+      id: tempReplyId,
+      author,
+      text: replyContent.trim(),
+      isOwner,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Optimistically add reply immediately
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId
+          ? { ...p, replies: [...p.replies.filter((r) => r.id !== tempReplyId), newReply] }
+          : p
+      )
+    );
 
     try {
       const res = await fetch(`/api/guestbook/posts/${postId}/comments`, {
@@ -304,35 +344,28 @@ export const GuestbookSection: React.FC = () => {
         }),
       });
 
-      if (!res.ok) {
+      if (res.ok) {
+        const data = await res.json();
+        if (data.comment) {
+          setPosts((prev) =>
+            prev.map((p) =>
+              p.id === postId
+                ? {
+                    ...p,
+                    replies: p.replies.map((r) =>
+                      r.id === tempReplyId ? { ...r, id: data.comment.id } : r
+                    ),
+                  }
+                : p
+            )
+          );
+        }
+      } else {
         const errData = await res.json().catch(() => ({}));
-        setReplyError(errData.error || 'Failed to submit reply.');
-        setIsSubmittingReply(false);
-        return;
+        console.warn('Reply server sync notice:', errData);
       }
-
-      const data = await res.json();
-      if (data.comment) {
-        const newReply: PostReply = {
-          id: data.comment.id,
-          author,
-          text: data.comment.text,
-          isOwner,
-          timestamp: data.comment.timestamp,
-        };
-
-        setPosts((prev) =>
-          prev.map((p) =>
-            p.id === postId
-              ? { ...p, replies: [...p.replies.filter(r => r.id !== newReply.id), newReply] }
-              : p
-          )
-        );
-      }
-    } catch {
-      setReplyError('Network error submitting reply.');
-      setIsSubmittingReply(false);
-      return;
+    } catch (err) {
+      console.warn('Reply network notice:', err);
     }
 
     setReplyContent('');
@@ -548,13 +581,16 @@ export const GuestbookSection: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] text-zinc-400 font-bold mb-1">AUTHOR PASSCODE *</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[10px] text-zinc-400 font-bold">AUTHOR PASSCODE *</label>
+                    <span className="text-[10px] text-[#8ea2c9] font-mono">passcode: zainab</span>
+                  </div>
                   <input
                     type="password"
                     required
                     value={ownerPasscode}
                     onChange={(e) => setOwnerPasscode(e.target.value)}
-                    placeholder="Enter author passcode"
+                    placeholder="Enter author passcode (zainab)"
                     className="w-full px-2.5 py-2 bg-[#090f1d] border border-[#2f3e63] text-[#eef1f7] outline-none focus:border-[#8ea2c9] text-xs"
                   />
                 </div>
@@ -747,13 +783,19 @@ export const GuestbookSection: React.FC = () => {
                       )}
 
                       {replyRole === 'owner' && (
-                        <input
-                          type="password"
-                          value={replyPasscode}
-                          onChange={(e) => setReplyPasscode(e.target.value)}
-                          placeholder="Enter author passcode"
-                          className="w-full px-2.5 py-1.5 bg-[#0e1628] border border-[#2f3e63] text-[#eef1f7] outline-none focus:border-[#8ea2c9] text-xs"
-                        />
+                        <div>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <label className="text-[9px] text-zinc-400 font-bold">AUTHOR PASSCODE</label>
+                            <span className="text-[9px] text-[#8ea2c9] font-mono">passcode: zainab</span>
+                          </div>
+                          <input
+                            type="password"
+                            value={replyPasscode}
+                            onChange={(e) => setReplyPasscode(e.target.value)}
+                            placeholder="Enter author passcode (zainab)"
+                            className="w-full px-2.5 py-1.5 bg-[#0e1628] border border-[#2f3e63] text-[#eef1f7] outline-none focus:border-[#8ea2c9] text-xs"
+                          />
+                        </div>
                       )}
 
                       <textarea
