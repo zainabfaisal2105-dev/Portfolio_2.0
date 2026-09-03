@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { Redis } from "@upstash/redis";
 
 export interface GuestbookComment {
   id: string;
@@ -19,16 +20,17 @@ export interface GuestbookPost {
   comments: GuestbookComment[];
 }
 
-const REDIS_KEY = "zainab_guestbook_posts";
+const REDIS_KEY = "zainab_guestbook_posts_v2";
 const GUESTBOOK_FILE = path.join(process.cwd(), "guestbook-data.json");
 
 // In-memory fallback in case filesystem is read-only and no remote DB configured
 let inMemoryPosts: GuestbookPost[] | null = null;
+let redisClient: Redis | null = null;
 
 /**
  * Check if Upstash Redis or Vercel KV credentials exist
  */
-function getUpstashCredentials() {
+export function getUpstashCredentials() {
   const url =
     process.env.UPSTASH_REDIS_REST_URL ||
     process.env.KV_REST_API_URL ||
@@ -49,31 +51,52 @@ function getUpstashCredentials() {
 }
 
 /**
- * Execute an Upstash Redis command via REST API
+ * Get configured Redis client
  */
-async function upstashCommand(command: any[]): Promise<any> {
+export function getRedisClient(): Redis | null {
+  if (redisClient) return redisClient;
+  const creds = getUpstashCredentials();
+  if (creds) {
+    try {
+      redisClient = new Redis({
+        url: creds.url,
+        token: creds.token,
+      });
+      return redisClient;
+    } catch (err) {
+      console.warn("Could not instantiate @upstash/redis:", err);
+    }
+  }
+  return null;
+}
+
+/**
+ * Fallback direct HTTP pipeline runner if client fails
+ */
+async function fallbackRestPipeline(commands: any[][]): Promise<any[] | null> {
   const creds = getUpstashCredentials();
   if (!creds) return null;
 
   try {
-    const res = await fetch(creds.url, {
+    const pipelineUrl = `${creds.url}/pipeline`;
+    const res = await fetch(pipelineUrl, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${creds.token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(command),
+      body: JSON.stringify(commands),
     });
 
     if (!res.ok) {
-      console.error(`Upstash REST command error (${res.status}):`, await res.text());
+      console.error(`Upstash pipeline error (${res.status}):`, await res.text());
       return null;
     }
 
     const data = await res.json();
-    return data?.result;
+    return Array.isArray(data) ? data.map((d: any) => d?.result) : null;
   } catch (err) {
-    console.error("Upstash connection error:", err);
+    console.error("Upstash fallback pipeline connection error:", err);
     return null;
   }
 }
@@ -104,7 +127,6 @@ function saveLocalFile(posts: GuestbookPost[]) {
   try {
     fs.writeFileSync(GUESTBOOK_FILE, JSON.stringify(posts, null, 2), "utf-8");
   } catch (err) {
-    // Expected on Vercel serverless (read-only filesystem)
     console.warn("Notice: Local filesystem write skipped (using memory cache):", (err as any)?.message);
   }
 }
@@ -113,31 +135,42 @@ function saveLocalFile(posts: GuestbookPost[]) {
  * Load all guestbook posts from persistent storage (Upstash Redis or local fallback)
  */
 export async function loadGuestbook(): Promise<GuestbookPost[]> {
-  const creds = getUpstashCredentials();
+  const client = getRedisClient();
 
-  if (creds) {
+  if (client) {
     try {
-      // 1. Try Redis command array ["GET", key]
-      const raw = await upstashCommand(["GET", REDIS_KEY]);
-      if (raw) {
-        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
-        if (Array.isArray(parsed)) {
-          return parsed;
+      const data = await client.get<any>(REDIS_KEY);
+      if (data) {
+        const posts = typeof data === "string" ? JSON.parse(data) : data;
+        if (Array.isArray(posts)) {
+          return posts;
         }
       }
-      // If key does not exist yet in Redis, check if local file has any initial posts to seed
+      // If redis key doesn't exist yet, seed with local data if available
       const local = loadLocalFile();
       if (local.length > 0) {
-        await upstashCommand(["SET", REDIS_KEY, JSON.stringify(local)]);
+        await client.set(REDIS_KEY, local);
         return local;
       }
       return [];
     } catch (err) {
-      console.error("Failed to load from remote database, falling back to local:", err);
+      console.error("Upstash Redis get error, trying REST pipeline fallback:", err);
     }
   }
 
-  // Fallback to local file / memory
+  // Secondary fallback: direct REST pipeline
+  const fallbackResults = await fallbackRestPipeline([["GET", REDIS_KEY]]);
+  if (fallbackResults && fallbackResults[0]) {
+    try {
+      const parsed =
+        typeof fallbackResults[0] === "string"
+          ? JSON.parse(fallbackResults[0])
+          : fallbackResults[0];
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+  }
+
+  // Tertiary fallback: local file / memory
   return loadLocalFile();
 }
 
@@ -148,17 +181,22 @@ export async function saveGuestbook(posts: GuestbookPost[]): Promise<boolean> {
   // Always update local cache/file
   saveLocalFile(posts);
 
-  const creds = getUpstashCredentials();
-  if (creds) {
+  const client = getRedisClient();
+  if (client) {
     try {
-      const res = await upstashCommand(["SET", REDIS_KEY, JSON.stringify(posts)]);
-      if (res === "OK" || res !== null) {
-        return true;
-      }
-      console.warn("Upstash save returned non-OK:", res);
+      await client.set(REDIS_KEY, posts);
+      return true;
     } catch (err) {
-      console.error("Failed to persist to Upstash Redis:", err);
+      console.error("Failed to persist via @upstash/redis client, trying REST fallback:", err);
     }
+  }
+
+  // Secondary fallback: direct REST pipeline
+  const fallbackResults = await fallbackRestPipeline([
+    ["SET", REDIS_KEY, JSON.stringify(posts)],
+  ]);
+  if (fallbackResults && fallbackResults[0] !== null) {
+    return true;
   }
 
   return true;
